@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selenium Test Runner</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: #f8fafc;
+            min-height: 100vh;
+            padding: 24px;
+            color: #334155;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            border: 1px solid #3b82f6;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #64748b;
+            border: 1px solid #e2e8f0;
+        }
+
+        .btn-secondary:hover {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .test-categories {
+            display: grid;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .category {
+            background: #f8f9fc;
+            border-radius: 16px;
+            padding: 25px;
+            border: 1px solid #e3e8f0;
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e3e8f0;
+        }
+
+        .category-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4em;
+            color: white;
+            font-weight: bold;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+
+        .category-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .category-count {
+            background: #e2e8f0;
+            color: #64748b;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: auto;
+        }
+
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 18px;
+        }
+
+        .test-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .test-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #3b82f6 0%, #1d4ed8 100%);
+            transform: scaleX(0);
+            transition: transform 0.2s ease;
+        }
+
+        .test-card::after {
+            content: '';
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #cbd5e1;
+            border-radius: 50%;
+            background: white;
+            transition: all 0.2s ease;
+        }
+
+        .test-card:hover {
+            border-color: #3b82f6;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+        }
+
+        .test-card:hover::after {
+            border-color: #3b82f6;
+        }
+
+        .test-card.selected {
+            border-color: #3b82f6;
+            background: #f8fafc;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+        }
+
+        .test-card.selected::before {
+            transform: scaleX(1);
+        }
+
+        .test-card.selected::after {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            content: '✓';
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .test-card-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        .test-number {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.8rem;
+            box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+        }
+
+        .test-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1e293b;
+            flex: 1;
+            line-height: 1.4;
+        }
+
+        .test-status {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #e3e8f0;
+        }
+
+        .status-emoji {
+            font-size: 1.5em;
+            margin-right: 8px;
+        }
+
+        .status-text {
+            display: flex;
+            align-items: center;
+            font-size: 0.9em;
+            font-weight: 500;
+            color: #4a5568;
+        }
+
+        .status-text.passed {
+            color: #059669;
+        }
+
+        .status-text.failed {
+            color: #dc2626;
+        }
+
+        .status-text.running {
+            color: #3b82f6;
+            animation: pulse 2s infinite;
+        }
+
+        .status-text.pending {
+            color: #d97706;
+        }
+
+        .test-duration {
+            font-size: 0.8em;
+            color: #718096;
+            background: #f7fafc;
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+
+        .test-progress {
+            margin-top: 12px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .test-progress.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 8px;
+            background: #e3e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3b82f6 0%, #1d4ed8 100%);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(90deg,
+                    transparent,
+                    rgba(255, 255, 255, 0.3),
+                    transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%);
+            }
+
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        .status-area {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 32px;
+            min-height: 80px;
+        }
+
+        .status-area.running {
+            background: #eff6ff;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .progress-bar {
+            background: #e2e8f0;
+            height: 6px;
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 16px 0;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #3b82f6 0%, #1d4ed8 100%);
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        .test-results {
+            display: grid;
+            gap: 15px;
+        }
+
+        .result-item {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .result-item.passed {
+            border-left: 4px solid #28a745;
+            background: #f8fff9;
+        }
+
+        .result-item.failed {
+            border-left: 4px solid #dc3545;
+            background: #fff8f8;
+        }
+
+        .result-item.error {
+            border-left: 4px solid #ffc107;
+            background: #fffbf0;
+        }
+
+        .result-item.running {
+            border-left: 4px solid #007bff;
+            background: #f0f8ff;
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-passed {
+            background: #28a745;
+            color: white;
+        }
+
+        .status-failed {
+            background: #dc3545;
+            color: white;
+        }
+
+        .status-error {
+            background: #ffc107;
+            color: black;
+        }
+
+        .status-running {
+            background: #007bff;
+            color: white;
+        }
+
+        .report-link {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .report-link:hover {
+            text-decoration: underline;
+        }
+
+        .spinner {
+            border: 3px solid #f1f5f9;
+            border-top: 3px solid #3b82f6;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        #liveLogsSection {
+            margin-top: 30px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e3e8f0;
+            overflow: hidden;
+        }
+
+        #liveLogsSection h3 {
+            margin: 0;
+            padding: 16px 24px;
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .logs-container {
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 0;
+            background: white;
+        }
+
+        .log-entry {
+            padding: 8px 16px;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 0.8em;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+
+        .log-entry.info {
+            background: #f8fafc;
+        }
+
+        .log-entry.success {
+            background: #f0fff4;
+            border-left: 3px solid #38a169;
+        }
+
+        .log-entry.error {
+            background: #fff5f5;
+            border-left: 3px solid #e53e3e;
+        }
+
+        .log-entry.warning {
+            background: #fffbf0;
+            border-left: 3px solid #d69e2e;
+        }
+
+        .log-timestamp {
+            color: #a0aec0;
+            font-size: 0.75em;
+            min-width: 60px;
+        }
+
+        .log-message {
+            flex: 1;
+            line-height: 1.3;
+        }
+
+        .logs-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .logs-container::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+
+        .logs-container::-webkit-scrollbar-thumb {
+            background: #cbd5e0;
+            border-radius: 3px;
+        }
+
+        .logs-container::-webkit-scrollbar-thumb:hover {
+            background: #a0aec0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧪 Selenium Test Runner</h1>
+            <p>Select and run your automated tests with detailed reporting</p>
+        </div>
+
+        <div class="content">
+            <div class="controls">
+                <button class="btn btn-primary" onclick="selectAll()">
+                    📋 Select All
+                </button>
+                <button class="btn btn-secondary" onclick="deselectAll()">
+                    ❌ Deselect All
+                </button>
+                <button class="btn btn-primary" onclick="runTests()" id="runBtn">
+                    🚀 Run Selected Tests
+                </button>
+            </div>
+
+            <div class="test-categories" id="testCategories">
+            </div>
+
+            <div class="status-area" id="statusArea">
+                <p>👆 Select tests above and click "Run Selected Tests" to begin</p>
+            </div>
+
+            <div id="results" class="hidden">
+                <h3>📊 Test Results</h3>
+                <div class="test-results" id="testResults">
+                </div>
+            </div>
+        </div>
+
+        <!-- Live Test Logs Section -->
+        <div id="liveLogsSection" class="hidden">
+            <h3>📋 Live Test Logs</h3>
+            <div class="logs-container" id="logsContainer">
+                <div class="log-entry info">
+                    <span class="log-timestamp">--:--</span>
+                    <span class="log-message">Ready to capture test logs...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let availableTests = {};
+        let isRunning = false;
+        let pollInterval;
+
+        const testNumbers = {
+            'login': '00',
+            'otp-verification': '01',
+            'add-admin': '02',
+            'change-password': '03',
+            'course-search': '04',
+            'create-course': '05'
+        };
+
+        async function loadTests() {
+            try {
+                const response = await fetch('/api/tests');
+                availableTests = await response.json();
+                displayTests();
+            } catch (error) {
+                console.error('Failed to load tests:', error);
+            }
+        }
+
+        function displayTests() {
+            const container = document.getElementById('testCategories');
+            container.innerHTML = '';
+
+            const categoryDiv = document.createElement('div');
+            categoryDiv.className = 'category';
+
+            categoryDiv.innerHTML = `
+                <div class="category-header">
+                    <div class="category-icon">
+                        👤
+                    </div>
+                    <h3 class="category-title">Login Tests</h3>
+                    <div class="category-count">1</div>
+                </div>
+                <div class="test-grid" id="category-login">
+                </div>
+            `;
+
+            const testGrid = categoryDiv.querySelector('.test-grid');
+
+            Object.entries(availableTests).forEach(([testKey, test]) => {
+                const testCard = document.createElement('div');
+                testCard.className = 'test-card';
+                testCard.setAttribute('data-test', testKey);
+
+                testCard.innerHTML = `
+                    <div class="test-card-header">
+                        <div class="test-number">${testNumbers[testKey] || '??'}</div>
+                        <div class="test-title">${test.name}</div>
+                    </div>
+                    <div class="test-status">
+                        <div class="status-text" id="status-${testKey}">
+                            <span class="status-emoji">⚪</span>
+                            Ready to run
+                        </div>
+                        <div class="test-duration" id="duration-${testKey}">Not run</div>
+                    </div>
+                    <div class="test-progress" id="progress-${testKey}">
+                        <div class="progress-bar-container">
+                            <div class="progress-bar-fill" id="progress-fill-${testKey}" style="width: 0%"></div>
+                        </div>
+                    </div>
+                `;
+
+                testCard.addEventListener('click', () => {
+                    toggleTest(testKey, testCard);
+                });
+
+                testGrid.appendChild(testCard);
+            });
+
+            container.appendChild(categoryDiv);
+        }
+
+        function toggleTest(testKey, testCard) {
+            if (isRunning) return;
+
+            testCard.classList.toggle('selected');
+            updateSelectedCount();
+        }
+
+        function selectAll() {
+            if (isRunning) return;
+
+            document.querySelectorAll('.test-card').forEach(card => {
+                card.classList.add('selected');
+            });
+            updateSelectedCount();
+        }
+
+        function deselectAll() {
+            if (isRunning) return;
+
+            document.querySelectorAll('.test-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            updateSelectedCount();
+        }
+
+        function updateSelectedCount() {
+            const selectedCount = document.querySelectorAll('.test-card.selected').length;
+            const runBtn = document.getElementById('runBtn');
+
+            if (selectedCount === 0) {
+                runBtn.innerHTML = '🚀 Run Selected Tests';
+            } else {
+                runBtn.innerHTML = `🚀 Run Selected Tests (${selectedCount})`;
+            }
+        }
+
+        async function runTests() {
+            const selectedTests = Array.from(document.querySelectorAll('.test-card.selected'))
+                .map(card => card.getAttribute('data-test'));
+
+            if (selectedTests.length === 0) {
+                alert('Please select at least one test to run!');
+                return;
+            }
+
+            isRunning = true;
+            updateRunButton();
+
+            const statusArea = document.getElementById('statusArea');
+            statusArea.className = 'status-area running';
+            statusArea.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <div class="spinner"></div>
+                    <span>Starting tests...</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 0%"></div>
+                </div>
+            `;
+
+            try {
+                const response = await fetch('/api/run-tests', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        selectedTests: selectedTests
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to start tests');
+                }
+
+                pollInterval = setInterval(pollStatus, 3000);
+
+                document.getElementById('results').classList.remove('hidden');
+            } catch (error) {
+                console.error('Failed to run tests:', error);
+                statusArea.innerHTML = `<p>❌ Failed to start tests: ${error.message}</p>`;
+                isRunning = false;
+                updateRunButton();
+            }
+        }
+
+        async function pollStatus() {
+            try {
+                const response = await fetch('/api/status');
+                const status = await response.json();
+
+                if (!status.running) {
+                    clearInterval(pollInterval);
+                    isRunning = false;
+                    updateRunButton();
+
+                    if (status.results) {
+                        status.results.forEach((result, index) => {
+                            const duration = result.duration ? `${Math.round(result.duration / 1000)}s` : null;
+                            updateTestStatus(result.test, result.status, duration);
+                            updateTestProgress(result.test, 100);
+                        });
+                        updateResults(status.results);
+                    }
+
+                    if (status.logs && status.logs.length > 0) {
+                        updateLiveLogs(status.logs);
+                    }
+
+                    const statusArea = document.getElementById('statusArea');
+                    statusArea.className = 'status-area';
+                    statusArea.innerHTML = '<p>✅ All tests completed! Check the results below.</p>';
+
+                    return;
+                }
+
+                updateStatus(status);
+            } catch (error) {
+                console.error('Failed to poll status:', error);
+            }
+        }
+
+        function updateStatus(status) {
+            const statusArea = document.getElementById('statusArea');
+            const progress = (status.currentIndex / status.totalTests) * 100;
+
+            statusArea.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <div class="spinner"></div>
+                    <span>Running tests... (${status.currentIndex + 1} of ${status.totalTests})</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: ${progress}%"></div>
+                </div>
+            `;
+
+            status.results.forEach((result, index) => {
+                const duration = result.duration ? `${Math.round(result.duration / 1000)}s` : null;
+                updateTestStatus(result.test, result.status, duration);
+            });
+
+            if (status.currentIndex < status.totalTests && status.tests) {
+                const currentTest = status.tests[status.currentIndex];
+                if (currentTest) {
+                    updateTestStatus(currentTest, 'running');
+
+                    if (status.currentTestProgress !== undefined) {
+                        updateTestProgress(currentTest, status.currentTestProgress);
+                    }
+                }
+            }
+
+            if (status.logs && status.logs.length > 0) {
+                updateLiveLogs(status.logs);
+            }
+
+            updateResults(status.results);
+        }
+
+        function updateTestStatus(testKey, status, duration = null) {
+            const statusElement = document.getElementById(`status-${testKey}`);
+            const durationElement = document.getElementById(`duration-${testKey}`);
+            const progressElement = document.getElementById(`progress-${testKey}`);
+
+            if (statusElement) {
+                let emoji, text;
+
+                switch (status) {
+                    case 'running':
+                        emoji = '⏳';
+                        text = 'Running...';
+                        break;
+                    case 'passed':
+                        emoji = '✅';
+                        text = 'Passed';
+                        break;
+                    case 'failed':
+                        emoji = '❌';
+                        text = 'Failed';
+                        break;
+                    case 'error':
+                        emoji = '⚠️';
+                        text = 'Error';
+                        break;
+                    case 'pending':
+                        emoji = '⏳';
+                        text = 'Pending...';
+                        break;
+                    default:
+                        emoji = '⚪';
+                        text = 'Ready to run';
+                }
+
+                statusElement.className = `status-text ${status}`;
+                statusElement.innerHTML = `<span class="status-emoji">${emoji}</span>${text}`;
+            }
+            if (progressElement) {
+                if (status === 'running') {
+                    progressElement.classList.add('visible');
+                } else {
+                    updateTestProgress(testKey, 100);
+                    setTimeout(() => {
+                        progressElement.classList.remove('visible');
+                    }, 1500);
+                }
+            }
+
+            if (durationElement) {
+                if (duration !== null) {
+                    durationElement.textContent = duration;
+                } else if (status !== 'running') {
+                    durationElement.textContent = status === 'passed' ? 'Completed' :
+                        status === 'failed' ? 'Failed' :
+                            status === 'error' ? 'Error' : 'Not run';
+                }
+            }
+        }
+
+        function updateTestProgress(testKey, progress) {
+            const progressFill = document.getElementById(`progress-fill-${testKey}`);
+
+            if (progressFill) {
+                progressFill.style.width = `${Math.min(progress, 100)}%`;
+            }
+        }
+
+        function showLogsSection() {
+            const logsSection = document.getElementById('liveLogsSection');
+            logsSection.classList.remove('hidden');
+        }
+
+        function updateLiveLogs(logs) {
+            if (!logs || logs.length === 0) return;
+
+            showLogsSection();
+
+            const logsContainer = document.getElementById('logsContainer');
+
+            if (logs.length > 0) {
+                logsContainer.innerHTML = '';
+            }
+
+            logs.forEach(log => {
+                const logEntry = document.createElement('div');
+                logEntry.className = `log-entry ${log.type}`;
+
+                logEntry.innerHTML = `
+                    <span class="log-timestamp">${log.timestamp}</span>
+                    <span class="log-message">${log.message}</span>
+                `;
+
+                logsContainer.appendChild(logEntry);
+            });
+
+            logsContainer.scrollTop = logsContainer.scrollHeight;
+        }
+
+        function updateResults(results) {
+            const container = document.getElementById('testResults');
+            container.innerHTML = '';
+
+            results.forEach(result => {
+                const resultItem = document.createElement('div');
+                resultItem.className = `result-item ${result.status}`;
+
+                const duration = result.duration ? `${Math.round(result.duration / 1000)}s` : '';
+                const reportLink = result.reportFile ?
+                    `<a href="/reports/${result.reportFile}" target="_blank" class="report-link">View Report</a>` : '';
+
+                resultItem.innerHTML = `
+                    <div>
+                        <strong>${result.name}</strong>
+                        ${duration ? `<span style="color: #666; margin-left: 10px;">(${duration})</span>` : ''}
+                        ${result.error ? `<div style="color: #dc3545; font-size: 0.9em; margin-top: 5px;">${result.error}</div>` : ''}
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span class="status-badge status-${result.status}">${result.status}</span>
+                        ${reportLink}
+                    </div>
+                `;
+
+                container.appendChild(resultItem);
+            });
+        }
+
+        function updateRunButton() {
+            const runBtn = document.getElementById('runBtn');
+            runBtn.disabled = isRunning;
+            runBtn.innerHTML = isRunning ?
+                '<div class="spinner" style="width: 16px; height: 16px;"></div> Running...' :
+                '🚀 Run Selected Tests';
+        }
+
+        loadTests();
+    </script>
+</body>
+
+</html>

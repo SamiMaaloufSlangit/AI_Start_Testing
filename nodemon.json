@@ -1,0 +1,19 @@
+{
+    "watch": [
+        "server.js",
+        "public",
+        "config"
+    ],
+    "ignore": [
+        "node_modules",
+        "test",
+        "Testreports",
+        "*.log"
+    ],
+    "ext": "js,json,html,css",
+    "env": {
+        "NODE_ENV": "development"
+    },
+    "verbose": true,
+    "legacyWatch": true
+}
