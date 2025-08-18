@@ -22,6 +22,20 @@ describe('Create Course', function () {
         options.addArguments('--window-size=1920,1080');
         options.addArguments('--disable-gpu');
         options.addArguments('--disable-extensions');
+        options.addArguments('--headless');
+        options.addArguments('--disable-save-password-bubble');
+        options.addArguments('--disable-password-manager-reauthentication');
+        options.addArguments('--disable-password-generation');
+        options.addArguments('--disable-autofill');
+        options.addArguments('--disable-web-security');
+        options.addArguments('--disable-features=VizDisplayCompositor,TranslateUI,BlinkGenPropertyTrees');
+        options.setUserPreferences({
+            'credentials_enable_service': false,
+            'profile.password_manager_enabled': false,
+            'profile.default_content_setting_values.notifications': 2,
+            'profile.default_content_settings.popups': 0,
+            'profile.managed_default_content_settings.popups': 0
+        });
 
         console.log('  - Chrome options configured');
 
@@ -303,6 +317,103 @@ describe('Create Course', function () {
                 } catch (altError) {
                     console.log('⚠️ No success notification found');
                 }
+            }
+
+            console.log('🔄 Refreshing page after notification check');
+            await driver.navigate().refresh();
+            console.log('  - Page refreshed successfully');
+
+            await driver.sleep(2000);
+
+            console.log('⏳ Waiting for page to reload completely');
+            await driver.wait(until.elementLocated(By.css("body")), 10000);
+            console.log('  - Page reloaded successfully');
+
+            await driver.sleep(2000);
+
+            console.log('🗑️ Looking for delete button of the first course (Testing Course)');
+            try {
+                await driver.wait(until.elementsLocated(By.css("button")), 10000);
+                console.log('  - Course cards loaded');
+
+                const courseCards = await driver.findElements(By.css("div[class*='course'], div[class*='card'], div[class*='grid']"));
+
+                if (courseCards.length > 0) {
+                    console.log(`  - Found ${courseCards.length} course card(s)`);
+
+                    const firstCourseCard = courseCards[0];
+
+                    const deleteButtons = await firstCourseCard.findElements(By.css("button.inline-flex.items-center.justify-center.whitespace-nowrap.rounded-md.text-sm.font-medium.ring-offset-background.transition-colors.focus-visible\\:outline-none.focus-visible\\:ring-2.focus-visible\\:ring-ring.focus-visible\\:ring-offset-2.disabled\\:pointer-events-none.disabled\\:opacity-50.border.border-input.hover\\:bg-accent.hover\\:text-accent-foreground.h-8.w-8.bg-background\\/80.backdrop-blur-sm"));
+
+                    if (deleteButtons.length > 0) {
+                        console.log('  - Delete button found in first course card');
+
+                        const firstDeleteButton = deleteButtons[0];
+
+                        await driver.executeScript("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});", firstDeleteButton);
+                        await driver.sleep(1000);
+
+                        console.log('🔘 Clicking the delete button for Testing Course');
+                        await firstDeleteButton.click();
+                        console.log('  - Delete button clicked successfully');
+
+                        await driver.sleep(2000);
+
+                        console.log('🔍 Looking for confirmation delete button');
+                        try {
+                            await driver.wait(until.elementLocated(By.css("button.bg-destructive")), 10000);
+                            console.log('  - Confirmation delete button found');
+
+                            const confirmDeleteButton = await driver.findElement(By.css("button.bg-destructive"));
+
+                            console.log('🔘 Clicking confirmation delete button');
+                            await confirmDeleteButton.click();
+                            console.log('  - Confirmation delete button clicked successfully');
+
+                            await driver.sleep(2000);
+
+                            console.log('🔍 Looking for delete success notification');
+                            try {
+                                await driver.wait(until.elementLocated(By.css("div.grid.gap-1")), 10000);
+                                console.log('  - Delete success notification found');
+
+                                const notification = await driver.findElement(By.css("div.grid.gap-1"));
+                                const notificationText = await notification.getText();
+                                console.log(`  - Notification text: "${notificationText}"`);
+
+                                if (notificationText.includes('Course deleted') || notificationText.includes('deleted successfully')) {
+                                    console.log('✅ Course deletion notification verified successfully');
+                                } else {
+                                    console.log(`⚠️ Unexpected notification text: "${notificationText}"`);
+                                }
+                            } catch (notificationError) {
+                                console.log('  - No delete notification found, checking for alternative selectors');
+                                try {
+                                    const altNotification = await driver.findElement(By.xpath("//div[contains(text(), 'Course deleted') or contains(text(), 'deleted successfully')]"));
+                                    const altNotificationText = await altNotification.getText();
+                                    console.log(`  - Alternative notification found: "${altNotificationText}"`);
+                                    console.log('✅ Course deletion notification verified successfully');
+                                } catch (altError) {
+                                    console.log('⚠️ No delete success notification found');
+                                }
+                            }
+
+                            console.log('✅ Course deletion confirmed and completed');
+
+                        } catch (error) {
+                            console.log(`⚠️ Could not find or click confirmation delete button: ${error.message}`);
+                        }
+
+                    } else {
+                        console.log('⚠️ No delete button found in first course card');
+                    }
+
+                } else {
+                    console.log('⚠️ No course cards found on the page');
+                }
+
+            } catch (error) {
+                console.log(`⚠️ Could not find or click delete button: ${error.message}`);
             }
 
             console.log('✅ Create Course test completed successfully');

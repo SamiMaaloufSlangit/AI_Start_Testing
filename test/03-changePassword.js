@@ -22,6 +22,19 @@ describe('Change Password', function () {
         options.addArguments('--disable-gpu');
         options.addArguments('--disable-extensions');
         options.addArguments('--headless');
+        options.addArguments('--disable-save-password-bubble');
+        options.addArguments('--disable-password-manager-reauthentication');
+        options.addArguments('--disable-password-generation');
+        options.addArguments('--disable-autofill');
+        options.addArguments('--disable-web-security');
+        options.addArguments('--disable-features=VizDisplayCompositor,TranslateUI,BlinkGenPropertyTrees');
+        options.setUserPreferences({
+            'credentials_enable_service': false,
+            'profile.password_manager_enabled': false,
+            'profile.default_content_setting_values.notifications': 2,
+            'profile.default_content_settings.popups': 0,
+            'profile.managed_default_content_settings.popups': 0
+        });
 
         console.log('  - Chrome options configured');
 

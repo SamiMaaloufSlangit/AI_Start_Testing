@@ -104,6 +104,66 @@
             transform: none;
         }
 
+        .account-selector {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 16px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.9em;
+            color: #334155;
+        }
+
+        .account-selector label {
+            font-weight: 600;
+            color: #64748b;
+        }
+
+        .account-selector select {
+            padding: 6px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            background: white;
+            color: #334155;
+            font-size: 0.9em;
+            cursor: pointer;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+
+        .account-selector select:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+        }
+
+        .account-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 8px;
+            background: #f1f5f9;
+            border-radius: 6px;
+            font-size: 0.8em;
+            font-weight: 500;
+        }
+
+        .account-indicator.teacher {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .account-indicator.admin {
+            background: #fce7f3;
+            color: #be185d;
+        }
+
+        .account-indicator.student {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
         .test-categories {
             display: grid;
             gap: 30px;
@@ -595,6 +655,18 @@
 
         <div class="content">
             <div class="controls">
+                <div class="account-selector">
+                    <label for="accountSelect">🔐 Test Account:</label>
+                    <select id="accountSelect" onchange="updateAccountSelection()">
+                        <option value="teacher">👩‍🏫 Teacher</option>
+                        <option value="admin">👨‍💼 Admin</option>
+                        <option value="student">👨‍🎓 Student</option>
+                    </select>
+                    <div class="account-indicator teacher" id="accountIndicator">
+                        <span>👩‍🏫</span>
+                        <span id="accountText">Teacher</span>
+                    </div>
+                </div>
                 <button class="btn btn-primary" onclick="selectAll()">
                     📋 Select All
                 </button>
@@ -636,6 +708,7 @@
         let availableTests = {};
         let isRunning = false;
         let pollInterval;
+        let selectedAccount = 'teacher'; // Default account
 
         const testNumbers = {
             'login': '00',
@@ -643,8 +716,38 @@
             'add-admin': '02',
             'change-password': '03',
             'course-search': '04',
-            'create-course': '05'
+            'create-delete-course': '05',
+            'course-enroll-leave': '06'
         };
+
+        // Account management functions
+        function updateAccountSelection() {
+            const selectElement = document.getElementById('accountSelect');
+            const indicator = document.getElementById('accountIndicator');
+            const accountText = document.getElementById('accountText');
+
+            selectedAccount = selectElement.value;
+
+            // Update indicator styling and text
+            indicator.className = `account-indicator ${selectedAccount}`;
+
+            const accountIcons = {
+                'teacher': '👩‍🏫',
+                'admin': '👨‍💼',
+                'student': '👨‍🎓'
+            };
+
+            const accountNames = {
+                'teacher': 'Teacher',
+                'admin': 'Admin',
+                'student': 'Student'
+            };
+
+            indicator.querySelector('span:first-child').textContent = accountIcons[selectedAccount];
+            accountText.textContent = accountNames[selectedAccount];
+
+            console.log(`Selected account: ${selectedAccount}`);
+        }
 
         async function loadTests() {
             try {
@@ -778,7 +881,8 @@
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        selectedTests: selectedTests
+                        selectedTests: selectedTests,
+                        selectedAccount: selectedAccount
                     })
                 });
 
@@ -1004,7 +1108,9 @@
                 '🚀 Run Selected Tests';
         }
 
+        // Initialize the interface
         loadTests();
+        updateAccountSelection(); // Set default account display
     </script>
 </body>
 

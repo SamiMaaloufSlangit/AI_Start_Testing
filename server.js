@@ -2,6 +2,7 @@ const express = require('express');
 const { spawn } = require('child_process');
 const path = require('path');
 const fs = require('fs');
+const accountManager = require('./config/accountManager');
 
 const app = express();
 const port = 3001;
@@ -16,7 +17,8 @@ const testScripts = {
     'add-admin': { name: 'Add Admin Test', script: '02-addAdmin', file: 'AddAdminReport.html' },
     'change-password': { name: 'Change Password Test', script: '03-changePassword', file: 'ChangePasswordReport.html' },
     'course-search': { name: 'Course Search Test', script: '04-courseSearch', file: 'CourseSearchReport.html' },
-    'create-course': { name: 'Create Course Test', script: '05-createCourse', file: 'CreateCourseReport.html' }
+    'create-delete-course': { name: 'Create and Delete Course Test', script: '05-createDeleteCourse', file: 'CreateDeleteCourseReport.html' },
+    'course-enroll-leave': { name: 'Course Enroll and Leave Test', script: '06-courseEnrollLeave', file: 'CourseEnrollLeaveReport.html' }
 };
 
 let currentTestRun = null;
@@ -31,11 +33,30 @@ app.get('/api/tests', (req, res) => {
     res.json(testScripts);
 });
 
+app.get('/api/accounts', (req, res) => {
+    res.json({
+        available: ['teacher', 'admin', 'student'],
+        current: accountManager.currentAccount || 'teacher'
+    });
+});
+
 app.post('/api/run-tests', async (req, res) => {
-    const { selectedTests } = req.body;
+    const { selectedTests, selectedAccount } = req.body;
 
     if (!selectedTests || selectedTests.length === 0) {
         return res.status(400).json({ error: 'No tests selected' });
+    }
+
+    // Validate and set the selected account
+    const validAccounts = ['teacher', 'admin', 'student'];
+    const accountToUse = selectedAccount && validAccounts.includes(selectedAccount) ? selectedAccount : 'teacher';
+
+    try {
+        accountManager.setAccount(accountToUse);
+        console.log(`Account set to: ${accountToUse}`);
+        console.log(`Using credentials for: ${accountManager.getCurrentAccount().email}`);
+    } catch (error) {
+        return res.status(400).json({ error: `Invalid account type: ${accountToUse}` });
     }
 
     if (currentTestRun) {
@@ -47,7 +68,8 @@ app.post('/api/run-tests', async (req, res) => {
         results: [],
         currentIndex: 0,
         startTime: new Date(),
-        currentTestProgress: 0
+        currentTestProgress: 0,
+        selectedAccount: accountToUse
     };
 
     testLogs.clear();
@@ -55,8 +77,11 @@ app.post('/api/run-tests', async (req, res) => {
 
     selectedTests.forEach(testKey => {
         testLogs.set(testKey, []);
-        addLogEntry(testKey, `🔄 Test ${testScripts[testKey]?.name} queued for execution...`);
+        addLogEntry(testKey, `🔄 Test ${testScripts[testKey]?.name} queued for execution using ${accountToUse} account...`);
     });
+
+    // Add initial account setup log
+    addLogEntry('system', `🔐 Account configured: ${accountToUse} (${accountManager.getCurrentAccount().email})`, 'info');
 
     res.json({ message: 'Tests started', runId: Date.now() });
 
@@ -198,7 +223,8 @@ function runTest(scriptName, testKey) {
             detached: false,
             env: {
                 ...process.env,
-                NODE_ENV: 'test'
+                NODE_ENV: 'test',
+                SELECTED_ACCOUNT: currentTestRun ? currentTestRun.selectedAccount : 'teacher'
             }
         });
 
