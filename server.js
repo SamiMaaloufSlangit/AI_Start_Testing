@@ -19,7 +19,8 @@ const testScripts = {
     'course-search': { name: 'Course Search Test', script: '04-courseSearch', file: 'CourseSearchReport.html' },
     'create-delete-course': { name: 'Create and Delete Course Test', script: '05-createDeleteCourse', file: 'CreateDeleteCourseReport.html' },
     'course-enroll-leave': { name: 'Course Enroll and Leave Test', script: '06-courseEnrollLeave', file: 'CourseEnrollLeaveReport.html' },
-    'add-notes': { name: 'Enroll and Add Notes Test', script: '07-EenrollAddNotes', file: 'AddDeleteNotesReport.html' }
+    'add-notes': { name: 'Enroll and Add Notes Test', script: '07-EenrollAddNotes', file: 'AddDeleteNotesReport.html' },
+    'ai-notes-summary': { name: 'AI Notes Summary Test', script: '08-aiNotesSummary', file: 'AiNotesSummaryReport.html' }
 };
 
 let currentTestRun = null;

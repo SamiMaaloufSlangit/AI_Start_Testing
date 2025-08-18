@@ -3,10 +3,12 @@ const chrome = require('selenium-webdriver/chrome');
 const path = require('path');
 const accountManager = require('../config/accountManager');
 
-console.log('🚀 Starting Course Search Test');
+console.log('🚀 Starting AI Notes Summary Test');
 console.log('📋 Test Configuration:');
 
-describe('Course Enroll and Leave', function () {
+const Note = "This is a test note for AI summary generation"
+
+describe('AI Notes Summary', function () {
 
     this.timeout(300000);
     let driver;
@@ -14,7 +16,6 @@ describe('Course Enroll and Leave', function () {
     beforeEach(async function () {
         let options = new chrome.Options();
         options.addArguments('--no-sandbox');
-        options.addArguments('--headless');
         options.addArguments('--disable-dev-shm-usage');
         options.addArguments('--window-size=1920,1080');
         options.addArguments('--disable-gpu');
@@ -87,7 +88,7 @@ describe('Course Enroll and Leave', function () {
         }
     });
 
-    it('successfully enrolled and left a course', async function () {
+    it('successfully accessed AI Notes Summary tab', async function () {
         try {
             console.log('🔗 Navigating to login page');
             await driver.get('http://51.112.130.69');
@@ -153,37 +154,97 @@ describe('Course Enroll and Leave', function () {
 
             await driver.sleep(2000);
 
-            console.log('🔍 Looking for "Leave Course" button');
-            console.log('⏳ Waiting for "Leave Course" button to appear');
-            await driver.wait(until.elementLocated(By.xpath("//button[contains(@class, 'border') and contains(@class, 'border-input') and contains(@class, 'hover:bg-accent') and text()='Leave Course']")), 10000);
-            console.log('  - "Leave Course" button found');
+            console.log('🔍 Looking for "View Course" button');
+            console.log('⏳ Waiting for "View Course" button to appear');
+            await driver.wait(until.elementLocated(By.xpath("//button[contains(@class, 'bg-primary') and contains(@class, 'hover:bg-primary/90') and contains(@class, 'text-primary-foreground') and text()='View Course']")), 10000);
+            console.log('  - "View Course" button found');
 
-            const leaveCourseButton = await driver.findElement(By.xpath("//button[contains(@class, 'border') and contains(@class, 'border-input') and contains(@class, 'hover:bg-accent') and text()='Leave Course']"));
+            const viewCourseButton = await driver.findElement(By.xpath("//button[contains(@class, 'bg-primary') and contains(@class, 'hover:bg-primary/90') and contains(@class, 'text-primary-foreground') and text()='View Course']"));
 
-            console.log('🔘 Clicking "Leave Course" button');
-            await leaveCourseButton.click();
-            console.log('  - "Leave Course" button clicked');
+            console.log('🔘 Clicking "View Course" button');
+            await viewCourseButton.click();
+            console.log('  - "View Course" button clicked');
 
             await driver.sleep(2000);
 
-            console.log('🔍 Verifying course was left successfully');
-            console.log('⏳ Waiting for "Enroll" button to reappear');
-            try {
-                await driver.wait(until.elementLocated(By.xpath("//button[contains(@class, 'bg-primary') and text()='Enroll']")), 10000);
-                console.log('  - ✅ "Enroll" button reappeared - course left successfully!');
+            console.log('🔍 Looking for notes textarea');
+            console.log('⏳ Waiting for notes textarea to appear');
+            await driver.wait(until.elementLocated(By.xpath("//textarea[contains(@class, 'min-h-[200px]') and contains(@placeholder, 'Enter your notes here...')]")), 10000);
+            console.log('  - Notes textarea found');
 
-                const reenrolledButton = await driver.findElement(By.xpath("//button[contains(@class, 'bg-primary') and text()='Enroll']"));
-                const buttonText = await reenrolledButton.getText();
-                console.log(`  - Button confirmed: "${buttonText}"`);
+            const notesTextarea = await driver.findElement(By.xpath("//textarea[contains(@class, 'min-h-[200px]') and contains(@placeholder, 'Enter your notes here...')]"));
 
-            } catch (error) {
-                console.log('  - ⚠️ Could not verify course was left - "Enroll" button did not reappear');
-                console.log(`  - Error: ${error.message}`);
-            }
+            console.log('✏️ Entering note text');
+            await notesTextarea.clear();
+            await notesTextarea.sendKeys(Note);
+            console.log(`  - Note entered: "${Note}"`);
 
             await driver.sleep(1000);
 
-            console.log('✅ Course enrollment and leave test completed successfully');
+            console.log('🔍 Looking for "Save Notes" button');
+            console.log('⏳ Waiting for "Save Notes" button to appear');
+            await driver.wait(until.elementLocated(By.xpath("//button[contains(text(), 'Save Notes')]")), 10000);
+            console.log('  - "Save Notes" button found');
+
+            const saveNotesButton = await driver.findElement(By.xpath("//button[contains(text(), 'Save Notes')]"));
+
+            console.log('🔘 Clicking "Save Notes" button');
+            await saveNotesButton.click();
+            console.log('  - "Save Notes" button clicked');
+
+            await driver.sleep(1000);
+
+            console.log('🔍 Looking for "Notes saved" notification');
+            console.log('⏳ Waiting for "Notes saved" notification to appear');
+            await driver.wait(until.elementLocated(By.xpath("//div[contains(@class, 'text-sm') and contains(@class, 'font-semibold') and text()='Notes saved']")), 10000);
+            console.log('  - "Notes saved" notification found');
+
+            const notificationElement = await driver.findElement(By.xpath("//div[contains(@class, 'text-sm') and contains(@class, 'font-semibold') and text()='Notes saved']"));
+            const notificationText = await notificationElement.getText();
+            console.log(`  - ✅ Notification confirmed: "${notificationText}"`);
+
+            await driver.sleep(1000);
+
+            console.log('🔍 Looking for "AI Notes Summary" tab button');
+            console.log('⏳ Waiting for "AI Notes Summary" tab button to appear');
+            await driver.wait(until.elementLocated(By.xpath("//button[@role='tab' and contains(@aria-controls, 'notes-summary') and contains(text(), 'AI Notes Summary')]")), 10000);
+            console.log('  - "AI Notes Summary" tab button found');
+
+            const aiNotesSummaryButton = await driver.findElement(By.xpath("//button[@role='tab' and contains(@aria-controls, 'notes-summary') and contains(text(), 'AI Notes Summary')]"));
+
+            console.log('🔘 Clicking "AI Notes Summary" tab button');
+            await aiNotesSummaryButton.click();
+            console.log('  - "AI Notes Summary" tab button clicked');
+
+            await driver.sleep(2000);
+
+            console.log('🔍 Looking for "Generate Summary" button');
+            console.log('⏳ Waiting for "Generate Summary" button to appear');
+            await driver.wait(until.elementLocated(By.xpath("//button[contains(@class, 'bg-primary') and contains(@class, 'text-primary-foreground') and contains(., 'Generate Summary')]")), 10000);
+            console.log('  - "Generate Summary" button found');
+
+            const generateSummaryButton = await driver.findElement(By.xpath("//button[contains(@class, 'bg-primary') and contains(@class, 'text-primary-foreground') and contains(., 'Generate Summary')]"));
+
+            console.log('🔘 Clicking "Generate Summary" button');
+            await generateSummaryButton.click();
+            console.log('  - "Generate Summary" button clicked');
+
+            await driver.sleep(3000);
+
+            console.log('🔍 Verifying that AI summary text has been generated');
+            console.log('⏳ Waiting for generated summary content to appear');
+            await driver.wait(until.elementLocated(By.xpath("//div[contains(@class, 'text-sm')]//p[string-length(normalize-space(text())) > 20]")), 15000);
+            console.log('  - Generated summary content found');
+
+            const summaryContent = await driver.findElement(By.xpath("//div[contains(@class, 'text-sm')]//p[string-length(normalize-space(text())) > 20]"));
+            const summaryText = await summaryContent.getText();
+            console.log(`  - ✅ Summary generated with ${summaryText.length} characters: "${summaryText.substring(0, 150)}${summaryText.length > 150 ? '...' : ''}"`);
+
+            if (summaryText.trim().length > 20) {
+                console.log('✅ Test completed successfully - AI Notes Summary generated and verified');
+            } else {
+                throw new Error('Generated summary text is too short or empty');
+            }
 
         } catch (error) {
             console.error('❌ Test failed:', error.message);
