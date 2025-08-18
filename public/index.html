@@ -692,7 +692,6 @@
             </div>
         </div>
 
-        <!-- Live Test Logs Section -->
         <div id="liveLogsSection" class="hidden">
             <h3>📋 Live Test Logs</h3>
             <div class="logs-container" id="logsContainer">
@@ -708,7 +707,7 @@
         let availableTests = {};
         let isRunning = false;
         let pollInterval;
-        let selectedAccount = 'teacher'; // Default account
+        let selectedAccount = 'teacher';
 
         const testNumbers = {
             'login': '00',
@@ -717,10 +716,10 @@
             'change-password': '03',
             'course-search': '04',
             'create-delete-course': '05',
-            'course-enroll-leave': '06'
+            'course-enroll-leave': '06',
+            'add-notes': '07'
         };
 
-        // Account management functions
         function updateAccountSelection() {
             const selectElement = document.getElementById('accountSelect');
             const indicator = document.getElementById('accountIndicator');
@@ -728,7 +727,6 @@
 
             selectedAccount = selectElement.value;
 
-            // Update indicator styling and text
             indicator.className = `account-indicator ${selectedAccount}`;
 
             const accountIcons = {
