@@ -21,7 +21,8 @@ const testScripts = {
     'course-enroll-leave': { name: 'Course Enroll and Leave Test', script: '06-courseEnrollLeave', file: 'CourseEnrollLeaveReport.html' },
     'add-notes': { name: 'Add Notes Test', script: '07-EenrollAddNotes', file: 'AddDeleteNotesReport.html' },
     'ai-notes-summary-download': { name: 'AI Notes Summary & Download Test', script: '08-aiNotesSummaryDownload', file: 'AiNotesSummaryDownloadReport.html' },
-    'chat-course': { name: 'Chat Course Test', script: '09-ChatCourse', file: 'ChatCourseReport.html' }
+    'chat-course': { name: 'Chat Course Test', script: '09-ChatCourse', file: 'ChatCourseReport.html' },
+    'mark-complete': { name: 'Mark Complete Test', script: '10-markComplete', file: 'MarkCompleteReport.html' }
 };
 
 let currentTestRun = null;

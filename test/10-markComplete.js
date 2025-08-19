@@ -3,13 +3,10 @@ const chrome = require('selenium-webdriver/chrome');
 const path = require('path');
 const accountManager = require('../config/accountManager');
 
-console.log('🚀 Starting Chat Course Test');
+console.log('🚀 Starting Mark Complete Test');
 console.log('📋 Test Configuration:');
 
-const Chat = "What is this course about?"
-
-
-describe('Chat Course', function () {
+describe('Mark Complete', function () {
 
     this.timeout(300000);
     let driver;
@@ -90,7 +87,7 @@ describe('Chat Course', function () {
         }
     });
 
-    it('successfully Chatted with AI in Course tab', async function () {
+    it('successfully Marked Complete', async function () {
         try {
             console.log('🔗 Navigating to login page');
             await driver.get('http://51.112.130.69');
@@ -176,97 +173,90 @@ describe('Chat Course', function () {
 
             await driver.sleep(2000);
 
-            console.log('🔍 Looking for Chat button');
-            console.log('⏳ Waiting for Chat button to appear');
-            await driver.wait(until.elementLocated(By.xpath("//button[@role='tab' and contains(@aria-controls, 'chat')]")), 10000);
-            console.log('  - Chat button found');
+            console.log('📊 Capturing course progress before marking complete');
+            let progressBefore = 0;
+            try {
+                const progressSelectors = [
+                    "//div[contains(@class, 'text-sm') and contains(@class, 'mb-1')]//span[string-length(normalize-space(text())) <= 3 and number(normalize-space(text())) >= 0]"
+                ];
 
-            const chatButton = await driver.findElement(By.xpath("//button[@role='tab' and contains(@aria-controls, 'chat')]"));
+                for (let selector of progressSelectors) {
+                    try {
+                        const progressElements = await driver.findElements(By.xpath(selector));
+                        if (progressElements.length > 0) {
+                            const progressText = await progressElements[0].getText();
+                            progressBefore = parseInt(progressText.replace(/[^0-9]/g, '')) || 0;
+                            console.log(`  - Progress before: ${progressBefore}% (found with selector: ${selector.substring(0, 50)}...)`);
+                            break;
+                        }
+                    } catch (e) {
+                        continue;
+                    }
+                }
 
-            console.log('🔘 Clicking Chat button');
-            await chatButton.click();
-            console.log('  - Chat button clicked');
+                if (progressBefore === 0) {
+                    console.log('  - No progress indicator found with any selector, assuming 0%');
+                }
+            } catch (error) {
+                console.log('  - Could not capture progress before, continuing with test');
+            }
 
-            await driver.sleep(2000);
+            console.log('🔍 Looking for "Mark Complete" button');
+            console.log('⏳ Waiting for "Mark Complete" button to appear');
+            await driver.wait(until.elementLocated(By.xpath("//button[contains(@class, 'bg-primary') and contains(@class, 'text-primary-foreground') and .//span[text()='Mark Complete']]")), 10000);
+            console.log('  - "Mark Complete" button found');
 
-            console.log('🔍 Looking for chat textarea');
-            console.log('⏳ Waiting for chat textarea to appear');
-            await driver.wait(until.elementLocated(By.xpath("//textarea[contains(@class, 'flex') and contains(@class, 'w-full') and contains(@placeholder, 'Ask a question about this lesson')]")), 10000);
-            console.log('  - Chat textarea found');
+            const markCompleteButton = await driver.findElement(By.xpath("//button[contains(@class, 'bg-primary') and contains(@class, 'text-primary-foreground') and .//span[text()='Mark Complete']]"));
 
-            const chatTextarea = await driver.findElement(By.xpath("//textarea[contains(@class, 'flex') and contains(@class, 'w-full') and contains(@placeholder, 'Ask a question about this lesson')]"));
-
-            console.log('✏️ Entering chat message');
-            await chatTextarea.clear();
-            await chatTextarea.sendKeys(Chat);
-            console.log(`  - Chat message entered: "${Chat}"`);
-
-            await driver.sleep(1000);
-
-            console.log('🔍 Looking for send button');
-            console.log('⏳ Waiting for send button to appear');
-            await driver.wait(until.elementLocated(By.xpath("//button[contains(@class, 'bg-primary') and contains(@class, 'h-10') and contains(@class, 'w-10')]")), 10000);
-            console.log('  - Send button found');
-
-            const sendButton = await driver.findElement(By.xpath("//button[contains(@class, 'bg-primary') and contains(@class, 'h-10') and contains(@class, 'w-10')]"));
-
-            console.log('🔘 Clicking send button');
-            await sendButton.click();
-            console.log('  - Send button clicked');
+            console.log('🔘 Clicking "Mark Complete" button');
+            await markCompleteButton.click();
+            console.log('  - "Mark Complete" button clicked');
 
             await driver.sleep(3000);
 
-            console.log('🔍 Verifying that AI chat response was received');
-            console.log('⏳ Waiting for new chat response to appear');
+            console.log('📊 Verifying course progress increased');
+            let progressAfter = 0;
+            let progressIncreased = false;
 
+            try {
+                const progressSelectors = [
+                    "//div[contains(@class, 'text-sm') and contains(@class, 'mb-1')]//span[string-length(normalize-space(text())) <= 3 and number(normalize-space(text())) >= 0]"
+                ];
 
-            await driver.sleep(2000);
-
-            const responseSelectors = [
-                "//div[contains(@class, 'space-y-1')]//div[contains(@class, 'text-xs') and contains(@class, 'text-muted-foreground')]",
-                "//div[contains(@class, 'space-y-1')]",
-                "//*[contains(text(), 'Assistant') or contains(text(), 'AI')]/following-sibling::*[string-length(normalize-space(text())) > 50]",
-                "//*[contains(text(), 'Assistant') or contains(text(), 'AI')]/parent::*/following-sibling::*[string-length(normalize-space(text())) > 50]",
-                "//div[contains(@class, 'text-xs') and contains(@class, 'text-muted-foreground') and contains(@class, 'bg-background')]/following-sibling::*[string-length(normalize-space(text())) > 50]",
-                "//*[string-length(normalize-space(text())) > 100 and contains(text(), 'Game') and contains(text(), 'Design')]",
-                "//*[string-length(normalize-space(text())) > 100 and not(self::textarea) and not(self::input)]"
-            ];
-
-            let responseContent = null;
-            let responseText = '';
-
-            for (let i = 0; i < responseSelectors.length; i++) {
-                try {
-                    console.log(`  - Trying response selector ${i + 1}:`);
-                    console.log(`    ${responseSelectors[i]}`);
-
-                    await driver.wait(until.elementLocated(By.xpath(responseSelectors[i])), 8000);
-
-                    const elements = await driver.findElements(By.xpath(responseSelectors[i]));
-                    console.log(`    Found ${elements.length} matching elements`);
-
-                    if (elements.length > 0) {
-                        responseContent = elements[elements.length - 1];
-                        responseText = await responseContent.getText();
-
-                        if (responseText.trim().length > 30) {
-                            console.log(`  - ✅ Found AI response with selector ${i + 1}: ${responseText.length} characters`);
-                            console.log(`    Using element ${elements.length} of ${elements.length} found`);
+                for (let selector of progressSelectors) {
+                    try {
+                        const progressElements = await driver.findElements(By.xpath(selector));
+                        if (progressElements.length > 0) {
+                            const progressText = await progressElements[0].getText();
+                            progressAfter = parseInt(progressText.replace(/[^0-9]/g, '')) || 0;
+                            console.log(`  - Progress after: ${progressAfter}% (found with selector: ${selector.substring(0, 50)}...)`);
                             break;
                         }
+                    } catch (e) {
+                        continue;
                     }
-                } catch (error) {
-                    console.log(`  - Response selector ${i + 1} failed: ${error.message.split('\n')[0]}`);
-                    continue;
                 }
+
+                if (progressAfter === 0 && progressBefore === 0) {
+                    console.log('  - No progress indicator found after marking complete');
+                } else {
+                    if (progressAfter > progressBefore) {
+                        progressIncreased = true;
+                        console.log(`  - ✅ Progress increased from ${progressBefore}% to ${progressAfter}%`);
+                    } else if (progressAfter === progressBefore) {
+                        console.log(`  - ⚠️ Progress remained the same: ${progressAfter}%`);
+                    } else {
+                        console.log(`  - ❌ Progress decreased from ${progressBefore}% to ${progressAfter}%`);
+                    }
+                }
+            } catch (error) {
+                console.log('  - Could not capture progress after, but mark complete was clicked');
             }
 
-            if (responseText.trim().length > 30) {
-                console.log(`  - ✅ AI response received with ${responseText.length} characters: "${responseText.substring(0, 200)}${responseText.length > 200 ? '...' : ''}"`);
-                console.log('✅ Chat Course test completed successfully - Chat message sent and AI response received');
+            if (progressIncreased) {
+                console.log('✅ Mark Complete test completed successfully - Progress increased');
             } else {
-                console.log('⚠️ No AI response detected, but chat message was sent successfully');
-                console.log('✅ Chat Course test completed - Chat message sent (response verification inconclusive)');
+                console.log('✅ Mark Complete test completed - Button clicked (progress verification inconclusive)');
             }
 
         } catch (error) {

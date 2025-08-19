@@ -132,36 +132,43 @@ describe('AI Notes Summary and Download', function () {
 
             await driver.sleep(2000);
 
-            console.log('🔍 Looking for enroll button');
-            console.log('⏳ Waiting for enroll button to appear');
-            await driver.wait(until.elementLocated(By.xpath("//button[contains(@class, 'bg-primary') and text()='Enroll']")), 10000);
-            console.log('  - Enroll button found');
+            console.log('🔍 Checking enrollment status');
+            const enrollButtons = await driver.findElements(By.xpath("//button[contains(@class, 'bg-primary') and text()='Enroll']"));
 
-            const enrollButton = await driver.findElement(By.xpath("//button[contains(@class, 'bg-primary') and text()='Enroll']"));
+            let viewCourseButton = null;
 
-            console.log('🔘 Clicking first enroll button');
-            await enrollButton.click();
-            console.log('  - Enroll button clicked');
+            if (enrollButtons.length === 0) {
+                console.log('  - No enroll buttons found - already enrolled in all available courses');
+                console.log('🔍 Looking for "View Course" button');
+                console.log('⏳ Waiting for "View Course" button to appear');
+                await driver.wait(until.elementLocated(By.xpath("//button[contains(@class, 'bg-primary') and contains(@class, 'hover:bg-primary/90') and contains(@class, 'text-primary-foreground') and text()='View Course']")), 10000);
+                console.log('  - "View Course" button found');
+                viewCourseButton = await driver.findElement(By.xpath("//button[contains(@class, 'bg-primary') and contains(@class, 'hover:bg-primary/90') and contains(@class, 'text-primary-foreground') and text()='View Course']"));
+            } else {
+                console.log(`  - Found ${enrollButtons.length} enroll button(s) - need to enroll first`);
+                console.log('🔘 Clicking first enroll button');
+                await enrollButtons[0].click();
+                console.log('  - Enroll button clicked');
 
-            await driver.sleep(2000);
+                await driver.sleep(2000);
 
-            console.log('🔍 Verifying enrollment was successful');
-            console.log('⏳ Waiting for "Enrolled" status to appear');
-            await driver.wait(until.elementLocated(By.xpath("//div[contains(@class, 'text-sm') and contains(@class, 'flex') and contains(@class, 'items-center') and contains(@class, 'rounded') and contains(@class, 'justify-center') and contains(@class, 'h-8') and contains(@class, 'w-20') and contains(@class, 'bg-background') and contains(@class, 'backdrop-blur-sm') and text()='Enrolled']")), 10000);
-            console.log('  - ✅ "Enrolled" status found - enrollment successful!');
+                console.log('🔍 Verifying enrollment was successful');
+                console.log('⏳ Waiting for "Enrolled" status to appear');
+                await driver.wait(until.elementLocated(By.xpath("//div[contains(@class, 'text-sm') and contains(@class, 'flex') and contains(@class, 'items-center') and contains(@class, 'rounded') and contains(@class, 'justify-center') and contains(@class, 'h-8') and contains(@class, 'w-20') and contains(@class, 'bg-background') and contains(@class, 'backdrop-blur-sm') and text()='Enrolled']")), 10000);
+                console.log('  - ✅ "Enrolled" status found - enrollment successful!');
 
-            const enrolledStatus = await driver.findElement(By.xpath("//div[contains(@class, 'text-sm') and contains(@class, 'flex') and contains(@class, 'items-center') and contains(@class, 'rounded') and contains(@class, 'justify-center') and contains(@class, 'h-8') and contains(@class, 'w-20') and contains(@class, 'bg-background') and contains(@class, 'backdrop-blur-sm') and text()='Enrolled']"));
-            const statusText = await enrolledStatus.getText();
-            console.log(`  - Status confirmed: "${statusText}"`);
+                const enrolledStatus = await driver.findElement(By.xpath("//div[contains(@class, 'text-sm') and contains(@class, 'flex') and contains(@class, 'items-center') and contains(@class, 'rounded') and contains(@class, 'justify-center') and contains(@class, 'h-8') and contains(@class, 'w-20') and contains(@class, 'bg-background') and contains(@class, 'backdrop-blur-sm') and text()='Enrolled']"));
+                const statusText = await enrolledStatus.getText();
+                console.log(`  - Status confirmed: "${statusText}"`);
 
-            await driver.sleep(2000);
+                await driver.sleep(2000);
 
-            console.log('🔍 Looking for "View Course" button');
-            console.log('⏳ Waiting for "View Course" button to appear');
-            await driver.wait(until.elementLocated(By.xpath("//button[contains(@class, 'bg-primary') and contains(@class, 'hover:bg-primary/90') and contains(@class, 'text-primary-foreground') and text()='View Course']")), 10000);
-            console.log('  - "View Course" button found');
-
-            const viewCourseButton = await driver.findElement(By.xpath("//button[contains(@class, 'bg-primary') and contains(@class, 'hover:bg-primary/90') and contains(@class, 'text-primary-foreground') and text()='View Course']"));
+                console.log('🔍 Looking for "View Course" button');
+                console.log('⏳ Waiting for "View Course" button to appear');
+                await driver.wait(until.elementLocated(By.xpath("//button[contains(@class, 'bg-primary') and contains(@class, 'hover:bg-primary/90') and contains(@class, 'text-primary-foreground') and text()='View Course']")), 10000);
+                console.log('  - "View Course" button found');
+                viewCourseButton = await driver.findElement(By.xpath("//button[contains(@class, 'bg-primary') and contains(@class, 'hover:bg-primary/90') and contains(@class, 'text-primary-foreground') and text()='View Course']"));
+            }
 
             console.log('🔘 Clicking "View Course" button');
             await viewCourseButton.click();
