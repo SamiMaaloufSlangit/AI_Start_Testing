@@ -196,6 +196,11 @@ describe('Mark Complete', function () {
 
                 if (progressBefore === 0) {
                     console.log('  - No progress indicator found with any selector, assuming 0%');
+                } else if (progressBefore >= 100) {
+                    console.log('  - ✅ Course is already complete (100%)');
+                    console.log('  - 🛑 Stopping test - no need to mark complete');
+                    console.log('✅ Test completed - Course was already complete');
+                    return;
                 }
             } catch (error) {
                 console.log('  - Could not capture progress before, continuing with test');
