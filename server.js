@@ -220,8 +220,8 @@ function runTest(scriptName, testKey) {
         const startTime = Date.now();
         console.log(`Starting test: ${scriptName}`);
 
-        // Run the test file with Mocha
-        const child = spawn('npx', ['mocha', `test/${scriptName}.js`], {
+        const reportFileName = testScripts[testKey].file.replace('.html', '');
+        const child = spawn('npx', ['mocha', `test/${scriptName}.js`, '--reporter', 'mochawesome', '--reporter-options', `reportDir=Testreports,reportFilename=${reportFileName},quiet=true`], {
             stdio: ['pipe', 'pipe', 'pipe'],
             shell: true,
             detached: false,
