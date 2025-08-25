@@ -27,7 +27,9 @@ const testScripts = {
     'add-teacher': { name: 'Add Teacher Test', script: '12-AddTeacher', file: 'AddTeacherReport.html' },
     'delete-teacher': { name: 'Delete Teacher Test', script: '13-DeleteTeacher', file: 'DeleteTeacherReport.html' },
     'bulk-add-teachers': { name: 'Bulk Add Teachers Test', script: '14-BulkAddTeachers', file: 'BulkAddTeachersReport.html' },
-    'resources': { name: 'Resources Test', script: '15-Resources', file: 'ResourcesReport.html' }
+    'export-teachers': { name: 'Export Teachers Test', script: '15-ExportTeachers', file: 'ExportTeachersReport.html' },
+    'search-filter-teachers': { name: 'Search & Filter Teachers Test', script: '16-SearchFilterTeachers', file: 'SearchFilterTeachersReport.html' },
+    'resources': { name: 'Resources Test', script: '17-Resources', file: 'ResourcesReport.html' }
 };
 
 let currentTestRun = null;
