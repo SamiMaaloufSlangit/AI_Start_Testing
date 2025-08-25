@@ -20,7 +20,7 @@ describe('Search Filter Teachers', function () {
         options.addArguments('--window-size=1920,1080');
         options.addArguments('--disable-gpu');
         options.addArguments('--disable-extensions');
-        //options.addArguments('--headless');
+        options.addArguments('--headless');
         options.addArguments('--disable-save-password-bubble');
         options.addArguments('--disable-password-manager-reauthentication');
         options.addArguments('--disable-password-generation');
