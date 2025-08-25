@@ -19,12 +19,15 @@ const testScripts = {
     'course-search': { name: 'Course Search Test', script: '04-courseSearch', file: 'CourseSearchReport.html' },
     'create-delete-course': { name: 'Create and Delete Course Test', script: '05-createDeleteCourse', file: 'CreateDeleteCourseReport.html' },
     'course-enroll-leave': { name: 'Course Enroll and Leave Test', script: '06-courseEnrollLeave', file: 'CourseEnrollLeaveReport.html' },
-    'add-notes': { name: 'Add Notes Test', script: '07-EenrollAddNotes', file: 'AddDeleteNotesReport.html' },
+    'add-notes': { name: 'Add Notes Test', script: '07-AddNotes', file: 'AddNotesReport.html' },
     'ai-notes-summary-download': { name: 'AI Notes Summary & Download Test', script: '08-aiNotesSummaryDownload', file: 'AiNotesSummaryDownloadReport.html' },
     'chat-course': { name: 'Chat Course Test', script: '09-ChatCourse', file: 'ChatCourseReport.html' },
     'mark-complete': { name: 'Mark Complete Test', script: '10-markComplete', file: 'MarkCompleteReport.html' },
     'enrolled-course-nb': { name: 'Enrolled Course Count Test', script: '11-EnrolledCourseNB', file: 'EnrolledCourseNBReport.html' },
-    'add-teacher': { name: 'Add Teacher Test', script: '12-AddTacher', file: 'AddTeacherReport.html' }
+    'add-teacher': { name: 'Add Teacher Test', script: '12-AddTeacher', file: 'AddTeacherReport.html' },
+    'delete-teacher': { name: 'Delete Teacher Test', script: '13-DeleteTeacher', file: 'DeleteTeacherReport.html' },
+    'bulk-add-teachers': { name: 'Bulk Add Teachers Test', script: '14-BulkAddTeachers', file: 'BulkAddTeachersReport.html' },
+    'resources': { name: 'Resources Test', script: '15-Resources', file: 'ResourcesReport.html' }
 };
 
 let currentTestRun = null;
