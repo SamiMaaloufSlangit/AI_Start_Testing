@@ -23,7 +23,8 @@ const testScripts = {
     'ai-notes-summary-download': { name: 'AI Notes Summary & Download Test', script: '08-aiNotesSummaryDownload', file: 'AiNotesSummaryDownloadReport.html' },
     'chat-course': { name: 'Chat Course Test', script: '09-ChatCourse', file: 'ChatCourseReport.html' },
     'mark-complete': { name: 'Mark Complete Test', script: '10-markComplete', file: 'MarkCompleteReport.html' },
-    'enrolled-course-nb': { name: 'Enrolled Course Count Test', script: '11-EnrolledCourseNB', file: 'EnrolledCourseNBReport.html' }
+    'enrolled-course-nb': { name: 'Enrolled Course Count Test', script: '11-EnrolledCourseNB', file: 'EnrolledCourseNBReport.html' },
+    'add-teacher': { name: 'Add Teacher Test', script: '12-AddTacher', file: 'AddTeacherReport.html' }
 };
 
 let currentTestRun = null;
