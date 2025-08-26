@@ -26,8 +26,8 @@ const testScripts = {
     'enrolled-course-nb': { name: 'Enrolled Course Count Test', script: '11-EnrolledCourseNB', file: 'EnrolledCourseNBReport.html' },
     'add-teacher': { name: 'Add Teacher Test', script: '12-AddTeacher', file: 'AddTeacherReport.html' },
     'edit-delete-teacher': { name: 'Edit and Delete Teacher Test', script: '13-EditDeleteTeacher', file: 'EditDeleteTeacherReport.html' },
-    'bulk-add-teachers': { name: 'Bulk Add Teachers Test', script: '14-BulkAddTeachers', file: 'BulkAddTeachersReport.html' },
-    'export-teachers': { name: 'Export Teachers Test', script: '15-ExportTeachers', file: 'ExportTeachersReport.html' },
+    'export-teachers': { name: 'Export Teachers Test', script: '14-ExportTeachers', file: 'ExportTeachersReport.html' },
+    'bulk-adding': { name: 'Bulk Add Test', script: '15-BulkAdding', file: 'BulkAddingReport.html' },
     'search-filter-teachers': { name: 'Search & Filter Teachers Test', script: '16-SearchFilterTeachers', file: 'SearchFilterTeachersReport.html' },
     'resources': { name: 'Resources Test', script: '17-Resources', file: 'ResourcesReport.html' }
 };
