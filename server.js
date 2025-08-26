@@ -25,7 +25,7 @@ const testScripts = {
     'mark-complete': { name: 'Mark Complete Test', script: '10-markComplete', file: 'MarkCompleteReport.html' },
     'enrolled-course-nb': { name: 'Enrolled Course Count Test', script: '11-EnrolledCourseNB', file: 'EnrolledCourseNBReport.html' },
     'add-teacher': { name: 'Add Teacher Test', script: '12-AddTeacher', file: 'AddTeacherReport.html' },
-    'delete-teacher': { name: 'Delete Teacher Test', script: '13-DeleteTeacher', file: 'DeleteTeacherReport.html' },
+    'edit-delete-teacher': { name: 'Edit and Delete Teacher Test', script: '13-EditDeleteTeacher', file: 'EditDeleteTeacherReport.html' },
     'bulk-add-teachers': { name: 'Bulk Add Teachers Test', script: '14-BulkAddTeachers', file: 'BulkAddTeachersReport.html' },
     'export-teachers': { name: 'Export Teachers Test', script: '15-ExportTeachers', file: 'ExportTeachersReport.html' },
     'search-filter-teachers': { name: 'Search & Filter Teachers Test', script: '16-SearchFilterTeachers', file: 'SearchFilterTeachersReport.html' },

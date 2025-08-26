@@ -6,7 +6,9 @@ const accountManager = require('../config/accountManager');
 console.log('🚀 Starting Delete Teacher Web Test');
 console.log('📋 Test Configuration:');
 
-describe('Delete Teacher', function () {
+const ChangedName = "EditedName"
+
+describe('Edit and Delete Teacher', function () {
 
     this.timeout(300000);
     let driver;
@@ -18,7 +20,7 @@ describe('Delete Teacher', function () {
         options.addArguments('--window-size=1920,1080');
         options.addArguments('--disable-gpu');
         options.addArguments('--disable-extensions');
-        options.addArguments('--headless');
+        //options.addArguments('--headless');
         options.addArguments('--disable-save-password-bubble');
         options.addArguments('--disable-password-manager-reauthentication');
         options.addArguments('--disable-password-generation');
@@ -119,6 +121,66 @@ describe('Delete Teacher', function () {
             console.log('🔘 Clicking the first teacher menu button');
             await firstMenuButton.click();
             console.log('  - Teacher menu button clicked');
+
+            await driver.sleep(1000);
+
+            console.log('🔘 Looking for Edit teacher menu item');
+
+            await driver.wait(until.elementLocated(By.xpath("//div[@role='menuitem' and contains(text(), 'Edit teacher')]")), 10000);
+            const editMenuItem = await driver.findElement(By.xpath("//div[@role='menuitem' and contains(text(), 'Edit teacher')]"));
+            console.log('  - Edit teacher menu item found');
+
+            console.log('🔘 Clicking Edit teacher menu item');
+            await editMenuItem.click();
+            console.log('  - Edit teacher menu item clicked');
+
+            await driver.sleep(1000);
+
+            console.log('✏️ Waiting for edit teacher dialog to appear');
+            await driver.wait(until.elementLocated(By.css("input#teacher-name")), 10000);
+            console.log('  - Edit teacher dialog found');
+
+            console.log('✏️ Updating teacher first name');
+            const nameInput = await driver.findElement(By.css("input#teacher-name"));
+            await nameInput.clear();
+            await nameInput.sendKeys(ChangedName);
+            console.log('  - Teacher name updated to:', ChangedName);
+
+            console.log('💾 Looking for Save button');
+            await driver.wait(until.elementLocated(By.xpath("//button[contains(text(), 'Save') or contains(text(), 'Update')]")), 10000);
+            const saveButton = await driver.findElement(By.xpath("//button[contains(text(), 'Save') or contains(text(), 'Update')]"));
+            console.log('  - Save button found');
+
+            console.log('💾 Clicking Save button');
+            await saveButton.click();
+            console.log('  - Save button clicked');
+
+            await driver.sleep(2000);
+            console.log('✅ Teacher edit completed successfully');
+
+            console.log('🔙 Looking for Back button to return to teachers list');
+            await driver.wait(until.elementLocated(By.css("button svg.lucide-chevron-left")), 10000);
+            const backButton = await driver.findElement(By.css("button svg.lucide-chevron-left")).findElement(By.xpath("./.."));
+            console.log('  - Back button found');
+
+            console.log('🔙 Clicking Back button');
+            await backButton.click();
+            console.log('  - Back button clicked');
+
+            console.log('🔄 Waiting to return to teachers list');
+            await driver.wait(until.elementLocated(By.css("button[aria-haspopup='menu'] svg.lucide-ellipsis-vertical")), 10000);
+            console.log('  - Back to teachers list, menu buttons are available');
+
+            console.log('🔘 Re-opening teacher menu for delete operation');
+            const menuButtonsAfterEdit = await driver.findElements(By.css("button[aria-haspopup='menu'] svg.lucide-ellipsis-vertical"));
+
+            if (menuButtonsAfterEdit.length === 0) {
+                throw new Error('No teacher menu buttons found after edit - page may not have refreshed properly');
+            }
+
+            const firstMenuButtonAfterEdit = await menuButtonsAfterEdit[0].findElement(By.xpath("./.."));
+            await firstMenuButtonAfterEdit.click();
+            console.log('  - Teacher menu re-opened');
 
             await driver.sleep(1000);
 
