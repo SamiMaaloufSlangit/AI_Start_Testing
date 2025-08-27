@@ -3,12 +3,12 @@ const chrome = require('selenium-webdriver/chrome');
 const path = require('path');
 const accountManager = require('../config/accountManager');
 
-console.log('🚀 Starting Edit and Delete Teacher Web Test');
+console.log('🚀 Starting Edit and Delete Student Web Test');
 console.log('📋 Test Configuration:');
 
 const ChangedName = "EditedName"
 
-describe('Edit and Delete Teacher', function () {
+describe('Edit and Delete Student', function () {
 
     this.timeout(300000);
     let driver;
@@ -67,7 +67,7 @@ describe('Edit and Delete Teacher', function () {
         }
     });
 
-    it('successfully deleted teacher', async function () {
+    it('successfully edited and deleted student', async function () {
         try {
             console.log('🔗 Navigating to login page');
             await driver.get('http://51.112.130.69');
@@ -95,56 +95,56 @@ describe('Edit and Delete Teacher', function () {
 
             await driver.sleep(2000);
 
-            console.log('⏳ Waiting for Teachers link to appear');
-            await driver.wait(until.elementLocated(By.css("a[href='/teachers']")), 10000);
-            console.log('  - Teachers link found');
+            console.log('⏳ Waiting for Students link to appear');
+            await driver.wait(until.elementLocated(By.css("a[href='/students']")), 10000);
+            console.log('  - Students link found');
 
-            console.log('🔘 Clicking Teachers link');
-            await driver.findElement(By.css("a[href='/teachers']")).click();
-            console.log('  - Teachers link clicked');
+            console.log('🔘 Clicking Students link');
+            await driver.findElement(By.css("a[href='/students']")).click();
+            console.log('  - Students link clicked');
 
             console.log('⏳ Waiting for teachers page to load');
-            await driver.wait(until.urlContains('/teachers'), 10000);
-            console.log('  - Teachers page loaded successfully');
+            await driver.wait(until.urlContains('/students'), 10000);
+            console.log('  - Students page loaded successfully');
 
             await driver.sleep(2000);
 
-            console.log('🔘 Looking for the first teacher menu button (three dots)');
+            console.log('🔘 Looking for the first student menu button (three dots)');
             const menuButtons = await driver.findElements(By.css("button[aria-haspopup='menu'] svg.lucide-ellipsis-vertical"));
             if (menuButtons.length === 0) {
-                throw new Error('No teacher menu buttons with ellipsis icon found');
+                throw new Error('No student menu buttons with ellipsis icon found');
             }
 
             const firstMenuButton = await menuButtons[0].findElement(By.xpath("./.."));
-            console.log('  - First teacher menu button (with three dots) found');
+            console.log('  - First student menu button (with three dots) found');
 
-            console.log('🔘 Clicking the first teacher menu button');
+            console.log('🔘 Clicking the first student menu button');
             await firstMenuButton.click();
-            console.log('  - Teacher menu button clicked');
+            console.log('  - Student menu button clicked');
 
             await driver.sleep(1000);
 
-            console.log('🔘 Looking for Edit teacher menu item');
+            console.log('🔘 Looking for Edit student menu item');
 
-            await driver.wait(until.elementLocated(By.xpath("//div[@role='menuitem' and contains(text(), 'Edit teacher')]")), 10000);
-            const editMenuItem = await driver.findElement(By.xpath("//div[@role='menuitem' and contains(text(), 'Edit teacher')]"));
-            console.log('  - Edit teacher menu item found');
+            await driver.wait(until.elementLocated(By.xpath("//div[@role='menuitem' and contains(text(), 'Edit student')]")), 10000);
+            const editMenuItem = await driver.findElement(By.xpath("//div[@role='menuitem' and contains(text(), 'Edit student')]"));
+            console.log('  - Edit student menu item found');
 
             console.log('🔘 Clicking Edit teacher menu item');
             await editMenuItem.click();
-            console.log('  - Edit teacher menu item clicked');
+            console.log('  - Edit student menu item clicked');
 
             await driver.sleep(1000);
 
-            console.log('✏️ Waiting for edit teacher dialog to appear');
-            await driver.wait(until.elementLocated(By.css("input#teacher-name")), 10000);
-            console.log('  - Edit teacher dialog found');
+            console.log('✏️ Waiting for edit student dialog to appear');
+            await driver.wait(until.elementLocated(By.css("input#student-name")), 10000);
+            console.log('  - Edit student dialog found');
 
-            console.log('✏️ Updating teacher first name');
-            const nameInput = await driver.findElement(By.css("input#teacher-name"));
+            console.log('✏️ Updating student first name');
+            const nameInput = await driver.findElement(By.css("input#student-name"));
             await nameInput.clear();
             await nameInput.sendKeys(ChangedName);
-            console.log('  - Teacher name updated to:', ChangedName);
+            console.log('  - Student name updated to:', ChangedName);
 
             console.log('💾 Looking for Save button');
             await driver.wait(until.elementLocated(By.xpath("//button[contains(text(), 'Save') or contains(text(), 'Update')]")), 10000);
@@ -156,9 +156,9 @@ describe('Edit and Delete Teacher', function () {
             console.log('  - Save button clicked');
 
             await driver.sleep(2000);
-            console.log('✅ Teacher edit completed successfully');
+            console.log('✅ Student edit completed successfully');
 
-            console.log('🔙 Looking for Back button to return to teachers list');
+            console.log('🔙 Looking for Back button to return to students list');
             await driver.wait(until.elementLocated(By.css("button svg.lucide-chevron-left")), 10000);
             const backButton = await driver.findElement(By.css("button svg.lucide-chevron-left")).findElement(By.xpath("./.."));
             console.log('  - Back button found');
@@ -167,31 +167,31 @@ describe('Edit and Delete Teacher', function () {
             await backButton.click();
             console.log('  - Back button clicked');
 
-            console.log('🔄 Waiting to return to teachers list');
+            console.log('🔄 Waiting to return to students list');
             await driver.wait(until.elementLocated(By.css("button[aria-haspopup='menu'] svg.lucide-ellipsis-vertical")), 10000);
-            console.log('  - Back to teachers list, menu buttons are available');
+            console.log('  - Back to students list, menu buttons are available');
 
-            console.log('🔘 Re-opening teacher menu for delete operation');
+            console.log('🔘 Re-opening student menu for delete operation');
             const menuButtonsAfterEdit = await driver.findElements(By.css("button[aria-haspopup='menu'] svg.lucide-ellipsis-vertical"));
 
             if (menuButtonsAfterEdit.length === 0) {
-                throw new Error('No teacher menu buttons found after edit - page may not have refreshed properly');
+                throw new Error('No student menu buttons found after edit - page may not have refreshed properly');
             }
 
             const firstMenuButtonAfterEdit = await menuButtonsAfterEdit[0].findElement(By.xpath("./.."));
             await firstMenuButtonAfterEdit.click();
-            console.log('  - Teacher menu re-opened');
+            console.log('  - Student menu re-opened');
 
             await driver.sleep(1000);
 
-            console.log('🗑️ Looking for Delete teacher menu item');
-            await driver.wait(until.elementLocated(By.xpath("//div[@role='menuitem' and contains(text(), 'Delete teacher')]")), 10000);
-            const deleteMenuItem = await driver.findElement(By.xpath("//div[@role='menuitem' and contains(text(), 'Delete teacher')]"));
-            console.log('  - Delete teacher menu item found');
+            console.log('🗑️ Looking for Delete student menu item');
+            await driver.wait(until.elementLocated(By.xpath("//div[@role='menuitem' and contains(text(), 'Delete student')]")), 10000);
+            const deleteMenuItem = await driver.findElement(By.xpath("//div[@role='menuitem' and contains(text(), 'Delete student')]"));
+            console.log('  - Delete student menu item found');
 
-            console.log('🗑️ Clicking Delete teacher menu item');
+            console.log('🗑️ Clicking Delete student menu item');
             await deleteMenuItem.click();
-            console.log('  - Delete teacher menu item clicked');
+            console.log('  - Delete student menu item clicked');
 
             await driver.sleep(1000);
 
@@ -208,7 +208,7 @@ describe('Edit and Delete Teacher', function () {
             await driver.sleep(3000);
             console.log('  - Waiting for notification to appear');
 
-            console.log('✅ Teacher deletion completed successfully');
+            console.log('✅ Student deletion completed successfully');
 
         } catch (error) {
             console.error('❌ Test failed:', error.message);

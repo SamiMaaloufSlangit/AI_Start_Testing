@@ -132,6 +132,14 @@ npx mocha test/00-Login.js --reporter mochawesome
 | 09 | Chat Course | Tests course chat features |
 | 10 | Mark Complete | Tests completion tracking |
 | 11 | Enrolled Course Count | Tests enrollment count validation |
+| 12 | Add Teacher | Tests teacher creation functionality |
+| 13 | Edit/Delete Teacher | Tests teacher management operations |
+| 14 | Export Teachers | Tests teacher data export |
+| 15 | Bulk Adding | Tests bulk import functionality |
+| 16 | Search/Filter Teachers | Tests teacher search and filtering |
+| 17 | Resources | Tests resource management |
+| 18 | Add Student | Tests student creation functionality |
+| 19 | Edit/Delete Student | Tests student management operations |
 
 ## 🖥️ Test Interface Features
 
