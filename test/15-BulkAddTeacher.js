@@ -5,7 +5,7 @@ const accountManager = require('../config/accountManager');
 const fs = require('fs');
 
 console.log('🚀 Starting Bulk Add Teachers Web Test');
-console.log('📋 Test Configuration:');
+console.log('📋 Test Configuration: Teachers');
 
 describe('Bulk Add Teachers', function () {
 
@@ -19,7 +19,7 @@ describe('Bulk Add Teachers', function () {
         options.addArguments('--window-size=1920,1080');
         options.addArguments('--disable-gpu');
         options.addArguments('--disable-extensions');
-        options.addArguments('--headless');
+        //options.addArguments('--headless');
         options.addArguments('--disable-save-password-bubble');
         options.addArguments('--disable-password-manager-reauthentication');
         options.addArguments('--disable-password-generation');
@@ -66,7 +66,7 @@ describe('Bulk Add Teachers', function () {
         }
     });
 
-    it('successfully bulk added teachers', async function () {
+    it('successfully bulk add teachers', async function () {
         try {
             console.log('🔗 Navigating to login page');
             await driver.get('http://51.112.130.69');
@@ -119,6 +119,28 @@ describe('Bulk Add Teachers', function () {
 
             await driver.sleep(1000);
 
+            console.log('👥 Looking for Students combobox button');
+            await driver.wait(until.elementLocated(By.xpath("//button[@role='combobox']//span[text()='Students']")), 10000);
+            const studentsCombobox = await driver.findElement(By.xpath("//button[@role='combobox']//span[text()='Students']/ancestor::button"));
+            console.log('  - Students combobox button found');
+
+            console.log('👥 Clicking Students combobox');
+            await studentsCombobox.click();
+            console.log('  - Students combobox clicked');
+
+            await driver.sleep(1000);
+
+            console.log('📋 Looking for last option in Students dropdown');
+            await driver.wait(until.elementLocated(By.css("div[role='option']:last-child")), 10000);
+            const lastStudentOption = await driver.findElement(By.css("div[role='option']:last-child"));
+            console.log('  - Last student option found');
+
+            console.log('📋 Selecting last student option');
+            await lastStudentOption.click();
+            console.log('  - Last student option selected');
+
+            await driver.sleep(1000);
+
             console.log('🏫 Looking for Schools combobox button');
             await driver.wait(until.elementLocated(By.xpath("//button[@role='combobox']//span[contains(@class, 'text-muted-foreground') and text()='Schools']")), 10000);
             const allSchoolsComboboxes = await driver.findElements(By.xpath("//button[@role='combobox']//span[contains(@class, 'text-muted-foreground') and text()='Schools']/ancestor::button"));
@@ -150,48 +172,38 @@ describe('Bulk Add Teachers', function () {
             const csvFileInput = await driver.findElement(By.css("input[type='file']#csvFile"));
             console.log('  - CSV file input found');
 
-            console.log('📁 Looking for CSV files');
+            console.log('📁 Looking for teachers.csv file');
             const teachersFilePath = path.join(__dirname, '..', 'teachers.csv');
-            const studentsFilePath = path.join(__dirname, '..', 'students.csv');
 
             const teachersExists = fs.existsSync(teachersFilePath);
-            const studentsExists = fs.existsSync(studentsFilePath);
 
             let csvFilePath;
-            if (teachersExists && studentsExists) {
-                csvFilePath = teachersFilePath;
-                console.log('  - Found both teachers.csv and students.csv');
-                console.log('  - Using teachers.csv (priority choice)');
-                console.log('  - To use students.csv instead, remove teachers.csv temporarily');
-            } else if (teachersExists) {
+            if (teachersExists) {
                 csvFilePath = teachersFilePath;
                 console.log('  - Found teachers.csv');
-            } else if (studentsExists) {
-                csvFilePath = studentsFilePath;
-                console.log('  - Found students.csv');
             } else {
-                throw new Error('No CSV file found. Please add either teachers.csv or students.csv to the project root.');
+                throw new Error('teachers.csv file not found. Please add teachers.csv to the project root for bulk adding teachers.');
             }
 
-            console.log('📁 Uploading CSV file');
+            console.log('📁 Uploading teachers CSV file');
             await csvFileInput.sendKeys(csvFilePath);
-            console.log('  - CSV file uploaded:', csvFilePath);
+            console.log('  - Teachers CSV file uploaded:', csvFilePath);
 
             await driver.sleep(2000);
 
-            console.log('🔼 Looking for Import Students button');
-            await driver.wait(until.elementLocated(By.xpath("//button[contains(@class, 'bg-primary') and contains(., 'Import Students')]")), 10000);
-            const importButton = await driver.findElement(By.xpath("//button[contains(@class, 'bg-primary') and contains(., 'Import Students')]"));
-            console.log('  - Import Students button found');
+            console.log('🔼 Looking for Import Teachers button');
+            await driver.wait(until.elementLocated(By.xpath("//button[contains(@class, 'bg-primary') and (contains(., 'Import Teachers') or contains(., 'Import Students'))]")), 10000);
+            const importButton = await driver.findElement(By.xpath("//button[contains(@class, 'bg-primary') and (contains(., 'Import Teachers') or contains(., 'Import Students'))]"));
+            console.log('  - Import button found');
 
-            console.log('🔼 Clicking Import Students button');
+            console.log('🔼 Clicking Import button for teachers');
             await importButton.click();
-            console.log('  - Import Students button clicked');
+            console.log('  - Import button clicked for teachers');
 
-            console.log('⏳ Waiting for "Users imported" notification');
-            await driver.wait(until.elementLocated(By.xpath("//div[contains(@class, 'text-sm') and contains(@class, 'font-semibold') and text()='Users imported']")), 15000);
-            const notification = await driver.findElement(By.xpath("//div[contains(@class, 'text-sm') and contains(@class, 'font-semibold') and text()='Users imported']"));
-            console.log('  - "Users imported" notification confirmed');
+            console.log('⏳ Waiting for "Teachers imported" or "Users imported" notification');
+            await driver.wait(until.elementLocated(By.xpath("//div[contains(@class, 'text-sm') and contains(@class, 'font-semibold') and (text()='Teachers imported' or text()='Users imported')]")), 15000);
+            const notification = await driver.findElement(By.xpath("//div[contains(@class, 'text-sm') and contains(@class, 'font-semibold') and (text()='Teachers imported' or text()='Users imported')]"));
+            console.log('  - Teachers import notification confirmed');
 
             await driver.sleep(2000);
 
