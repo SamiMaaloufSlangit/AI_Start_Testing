@@ -41,7 +41,9 @@ const testScripts = {
     'edit-lesson': { name: 'Edit Lesson Test', script: '26-EditLesson', file: 'EditLessonReport.html' },
     'add-model': { name: 'Add Model Test', script: '27-AddModel', file: 'AddModelReport.html' },
     'delete-model': { name: 'Delete Model Test', script: '28-DeleteModel', file: 'DeleteModelReport.html' },
-    'course-clone': { name: 'Course Clone Test', script: '29-CourseClone', file: 'CourseCloneReport.html' }
+    'course-clone': { name: 'Course Clone Test', script: '29-CourseClone', file: 'CourseCloneReport.html' },
+    'student-dashboard-cards': { name: 'Student Dashboard Cards Test', script: '30-StudentDashboardCards', file: 'StudentDashboardCardsReport.html' },
+    'add-subjects': { name: 'Add Subjects Test', script: '31-AddSubjects', file: 'AddSubjectsReport.html' }
 };
 
 let currentTestRun = null;
