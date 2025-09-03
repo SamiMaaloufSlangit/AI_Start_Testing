@@ -72,7 +72,7 @@ describe('Add Teacher', function () {
     it('successfully added teacher', async function () {
         try {
             console.log('🔗 Navigating to login page');
-            await driver.get('http://51.112.130.69');
+            await driver.get('https://learn.aistart.school/');
             console.log('  - Login page loaded');
 
             console.log('⏳ Waiting for email input field');
