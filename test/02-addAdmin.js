@@ -3,14 +3,14 @@ const chrome = require('selenium-webdriver/chrome');
 const path = require('path');
 const accountManager = require('../config/accountManager');
 
-console.log('🚀 Starting Register Web Test');
-console.log('📋 Test Configuration:');
+console.log('🚀 Starting Add Admin Web Test');
+console.log('📋 Test Configuration: Admin');
 
 const adminName = "John Doe Test"
 const adminEmail = "test123@test.com"
 const adminPassword = "123123"
 
-describe('Admin Navigation', function () {
+describe('Add Admin', function () {
 
     this.timeout(300000);
     let driver;
