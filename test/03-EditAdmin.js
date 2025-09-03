@@ -114,11 +114,9 @@ describe('Edit Admin', function () {
             console.log('  - Admin list with ellipsis buttons found');
 
             console.log('🔍 Finding ellipsis buttons in admin rows');
-            // Look for ellipsis buttons specifically in admin table rows or admin cards
             const ellipsisButtons = await driver.findElements(By.css("tr button[aria-haspopup='menu'], [data-testid*='admin'] button[aria-haspopup='menu'], .admin-row button[aria-haspopup='menu']"));
 
             if (ellipsisButtons.length === 0) {
-                // Fallback to all ellipsis buttons and try the second one instead of first
                 console.log('  - No admin-specific ellipsis found, trying all ellipsis buttons');
                 const allEllipsisButtons = await driver.findElements(By.css("button[aria-haspopup='menu']"));
                 console.log(`  - Found ${allEllipsisButtons.length} total ellipsis menu buttons`);
