@@ -3,12 +3,12 @@ const chrome = require('selenium-webdriver/chrome');
 const path = require('path');
 const accountManager = require('../config/accountManager');
 
-console.log('🚀 Starting Add Subjects Web Test');
+console.log('🚀 Starting Edit Subjects Web Test');
 console.log('📋 Test Configuration:');
 
-const SubjectName = "Testing 101"
+const EditedSubjectName = "Testing 101 Edited"
 
-describe('Add Subjects', function () {
+describe('Edit Subjects', function () {
 
     this.timeout(300000);
     let driver;
@@ -20,7 +20,7 @@ describe('Add Subjects', function () {
         options.addArguments('--window-size=1920,1080');
         options.addArguments('--disable-gpu');
         options.addArguments('--disable-extensions');
-        options.addArguments('--headless');
+        //options.addArguments('--headless');
         options.addArguments('--disable-save-password-bubble');
         options.addArguments('--disable-password-manager-reauthentication');
         options.addArguments('--disable-password-generation');
@@ -67,7 +67,7 @@ describe('Add Subjects', function () {
         }
     });
 
-    it('successfully added subjects', async function () {
+    it('successfully edited subjects', async function () {
         try {
             console.log('🔗 Navigating to login page');
             await driver.get('https://learn.aistart.school/');
@@ -119,21 +119,40 @@ describe('Add Subjects', function () {
 
             await driver.sleep(2000);
 
-            console.log('⏳ Waiting for subject input field to appear');
-            await driver.wait(until.elementLocated(By.id('subject')), 10000);
-            console.log('  - Subject input field found');
+            console.log('⏳ Waiting for subjects table to load');
+            await driver.wait(until.elementLocated(By.xpath("//button[contains(text(), 'Edit')]")), 10000);
+            console.log('  - Subjects table with Edit buttons found');
 
-            console.log('📝 Filling subject name field');
-            const subjectInput = await driver.findElement(By.id('subject'));
-            await subjectInput.clear();
-            await subjectInput.sendKeys(SubjectName);
-            console.log(`  - Subject name entered: ${SubjectName}`);
+            console.log('🔍 Finding all Edit buttons');
+            const editButtons = await driver.findElements(By.xpath("//button[contains(text(), 'Edit')]"));
+            console.log(`  - Found ${editButtons.length} Edit buttons`);
+
+            if (editButtons.length === 0) {
+                throw new Error('No Edit buttons found in subjects table');
+            }
+
+            console.log('🔘 Clicking the last Edit button');
+            const lastEditButton = editButtons[editButtons.length - 1];
+            await lastEditButton.click();
+            console.log('  - Last Edit button clicked successfully');
+
+            await driver.sleep(2000);
+
+            console.log('⏳ Waiting for edit subject input field to appear');
+            await driver.wait(until.elementLocated(By.id('edit-subject')), 10000);
+            console.log('  - Edit subject input field found');
+
+            console.log('📝 Clearing and replacing subject name field');
+            const editSubjectInput = await driver.findElement(By.id('edit-subject'));
+            await editSubjectInput.clear();
+            await editSubjectInput.sendKeys(EditedSubjectName);
+            console.log(`  - Subject name replaced with: ${EditedSubjectName}`);
 
             await driver.sleep(1000);
 
-            console.log('🔘 Clicking Add subject button');
-            await driver.findElement(By.xpath("//button[@type='submit' and contains(., 'Add subject')]")).click();
-            console.log('  - Add subject button clicked successfully');
+            console.log('🔘 Clicking Save Changes button');
+            await driver.findElement(By.xpath("//button[contains(text(), 'Save Changes')]")).click();
+            console.log('  - Save Changes button clicked successfully');
 
             console.log('⏳ Waiting for success notification');
             await driver.wait(until.elementLocated(By.css("div.text-sm.font-semibold")), 10000);
@@ -145,7 +164,7 @@ describe('Add Subjects', function () {
 
             await driver.sleep(2000);
 
-            console.log('✅ Test completed successfully - Subject added with notification');
+            console.log('✅ Test completed successfully - Subject updated with notification');
 
         } catch (error) {
             console.error('❌ Test failed:', error.message);
