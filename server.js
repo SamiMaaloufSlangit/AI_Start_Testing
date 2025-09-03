@@ -44,7 +44,8 @@ const testScripts = {
     'course-clone': { name: 'Course Clone Test', script: '29-CourseClone', file: 'CourseCloneReport.html' },
     'student-dashboard-cards': { name: 'Student Dashboard Cards Test', script: '30-StudentDashboardCards', file: 'StudentDashboardCardsReport.html' },
     'add-subjects': { name: 'Add Subjects Test', script: '31-AddSubjects', file: 'AddSubjectsReport.html' },
-    'edit-subject': { name: 'Edit Subject Test', script: '32-EditSubject', file: 'EditSubjectReport.html' }
+    'edit-subject': { name: 'Edit Subject Test', script: '32-EditSubject', file: 'EditSubjectReport.html' },
+    'delete-subject': { name: 'Delete Subject Test', script: '33-DeleteSubject', file: 'DeleteSubjectReport.html' }
 };
 
 let currentTestRun = null;
