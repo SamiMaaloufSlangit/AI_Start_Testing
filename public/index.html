@@ -199,10 +199,22 @@
             background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
         }
 
+        .category-info {
+            flex: 1;
+        }
+
         .category-title {
             font-size: 1.2rem;
             font-weight: 600;
             color: #1e293b;
+            margin: 0 0 4px 0;
+        }
+
+        .category-description {
+            font-size: 0.875rem;
+            color: #64748b;
+            margin: 0;
+            line-height: 1.4;
         }
 
         .category-count {
@@ -213,6 +225,7 @@
             font-size: 0.75rem;
             font-weight: 600;
             margin-left: auto;
+            align-self: flex-start;
         }
 
         .test-grid {
@@ -787,55 +800,108 @@
             const container = document.getElementById('testCategories');
             container.innerHTML = '';
 
-            const categoryDiv = document.createElement('div');
-            categoryDiv.className = 'category';
+            const categoryInfo = {
+                'authentication': {
+                    title: 'Authentication & Login',
+                    icon: '🔐',
+                    description: 'Login, OTP verification, and password management tests'
+                },
+                'admin-management': {
+                    title: 'Admin Management',
+                    icon: '👨‍💼',
+                    description: 'Add, edit, and delete admin accounts'
+                },
+                'teacher-management': {
+                    title: 'Teacher Management',
+                    icon: '👩‍🏫',
+                    description: 'Teacher account management and operations'
+                },
+                'student-management': {
+                    title: 'Student Management',
+                    icon: '👨‍🎓',
+                    description: 'Student account management and dashboard features'
+                },
+                'course-management': {
+                    title: 'Course Management',
+                    icon: '📚',
+                    description: 'Course creation, search, enrollment, and subject management'
+                },
+                'course-content': {
+                    title: 'Course Content',
+                    icon: '📝',
+                    description: 'Modules, lessons, notes, resources, and content management'
+                }
+            };
 
-            categoryDiv.innerHTML = `
-                <div class="category-header">
-                    <div class="category-icon">
-                        👤
-                    </div>
-                    <h3 class="category-title">Login Tests</h3>
-                    <div class="category-count">33</div>
-                </div>
-                <div class="test-grid" id="category-login">
-                </div>
-            `;
-
-            const testGrid = categoryDiv.querySelector('.test-grid');
-
+            const testsByCategory = {};
             Object.entries(availableTests).forEach(([testKey, test]) => {
-                const testCard = document.createElement('div');
-                testCard.className = 'test-card';
-                testCard.setAttribute('data-test', testKey);
+                const category = test.category || 'uncategorized';
+                if (!testsByCategory[category]) {
+                    testsByCategory[category] = [];
+                }
+                testsByCategory[category].push({ key: testKey, ...test });
+            });
 
-                testCard.innerHTML = `
-                    <div class="test-card-header">
-                        <div class="test-number">${testNumbers[testKey] || '??'}</div>
-                        <div class="test-title">${test.name}</div>
-                    </div>
-                    <div class="test-status">
-                        <div class="status-text" id="status-${testKey}">
-                            <span class="status-emoji">⚪</span>
-                            Ready to run
+            Object.entries(testsByCategory).forEach(([categoryKey, tests]) => {
+                const categoryDiv = document.createElement('div');
+                categoryDiv.className = 'category';
+
+                const info = categoryInfo[categoryKey] || {
+                    title: 'Other Tests',
+                    icon: '🔧',
+                    description: 'Miscellaneous tests'
+                };
+
+                categoryDiv.innerHTML = `
+                    <div class="category-header">
+                        <div class="category-icon">
+                            ${info.icon}
                         </div>
-                        <div class="test-duration" id="duration-${testKey}">Not run</div>
-                    </div>
-                    <div class="test-progress" id="progress-${testKey}">
-                        <div class="progress-bar-container">
-                            <div class="progress-bar-fill" id="progress-fill-${testKey}" style="width: 0%"></div>
+                        <div class="category-info">
+                            <h3 class="category-title">${info.title}</h3>
+                            <p class="category-description">${info.description}</p>
                         </div>
+                        <div class="category-count">${tests.length}</div>
+                    </div>
+                    <div class="test-grid" id="category-${categoryKey}">
                     </div>
                 `;
 
-                testCard.addEventListener('click', () => {
-                    toggleTest(testKey, testCard);
+                const testGrid = categoryDiv.querySelector('.test-grid');
+
+                tests.forEach(test => {
+                    const testCard = document.createElement('div');
+                    testCard.className = 'test-card';
+                    testCard.setAttribute('data-test', test.key);
+
+                    testCard.innerHTML = `
+                        <div class="test-card-header">
+                            <div class="test-number">${testNumbers[test.key] || '??'}</div>
+                            <div class="test-title">${test.name}</div>
+                        </div>
+                        <div class="test-status">
+                            <div class="status-text" id="status-${test.key}">
+                                <span class="status-emoji">⚪</span>
+                                Ready to run
+                            </div>
+                            <div class="test-duration" id="duration-${test.key}">Not run</div>
+                        </div>
+                        <div class="test-progress" id="progress-${test.key}">
+                            <div class="progress-bar-container">
+                                <div class="progress-bar-fill" id="progress-fill-${test.key}" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    `;
+
+                    testCard.addEventListener('click', () => {
+                        toggleTest(test.key, testCard);
+                    });
+
+                    testGrid.appendChild(testCard);
                 });
 
-                testGrid.appendChild(testCard);
+                container.appendChild(categoryDiv);
             });
-
-            container.appendChild(categoryDiv);
         }
 
         function toggleTest(testKey, testCard) {
