@@ -119,7 +119,6 @@ describe('Create Course', function () {
             console.log('🔘 Clicking "Create Course" button');
             const createCourseButton = await driver.findElement(By.css("button.inline-flex.items-center.justify-center.whitespace-nowrap.rounded-md.text-sm.font-medium.ring-offset-background.transition-colors.focus-visible\\:outline-none.focus-visible\\:ring-2.focus-visible\\:ring-ring.focus-visible\\:ring-offset-2.disabled\\:pointer-events-none.disabled\\:opacity-50.h-10.px-4.py-2.self-start.bg-primary.hover\\:bg-primary\\/90.text-primary-foreground"));
 
-            // Check button properties
             const createButtonText = await createCourseButton.getText();
             const createButtonEnabled = await createCourseButton.isEnabled();
             const createButtonDisplayed = await createCourseButton.isDisplayed();
@@ -128,7 +127,6 @@ describe('Create Course', function () {
             await createCourseButton.click();
             console.log('  - "Create Course" button clicked');
 
-            // Check if page changed
             await driver.sleep(2000);
             const createButtonUrl = await driver.getCurrentUrl();
             console.log(`  - Current URL after clicking: ${createButtonUrl}`);
