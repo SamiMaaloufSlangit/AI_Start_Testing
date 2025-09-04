@@ -74,7 +74,6 @@ app.post('/api/run-tests', async (req, res) => {
         return res.status(400).json({ error: 'No tests selected' });
     }
 
-    // Validate and set the selected account
     const validAccounts = ['teacher', 'admin', 'student'];
     const accountToUse = selectedAccount && validAccounts.includes(selectedAccount) ? selectedAccount : 'teacher';
 
@@ -107,7 +106,6 @@ app.post('/api/run-tests', async (req, res) => {
         addLogEntry(testKey, `🔄 Test ${testScripts[testKey]?.name} queued for execution using ${accountToUse} account...`);
     });
 
-    // Add initial account setup log
     addLogEntry('system', `🔐 Account configured: ${accountToUse} (${accountManager.getCurrentAccount().email})`, 'info');
 
     res.json({ message: 'Tests started', runId: Date.now() });
