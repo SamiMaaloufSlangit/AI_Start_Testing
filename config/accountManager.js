@@ -14,6 +14,10 @@ class AccountManager {
             student: {
                 email: process.env.STUDENT_EMAIL,
                 password: process.env.STUDENT_PASSWORD
+            },
+            grade11: {
+                email: process.env.GRADE11_EMAIL,
+                password: process.env.GRADE11_PASSWORD
             }
         };
 
@@ -25,18 +29,18 @@ class AccountManager {
     }
 
     setAccount(accountType) {
-        if (accountType === 'teacher' || accountType === 'admin' || accountType === 'student') {
+        if (accountType === 'teacher' || accountType === 'admin' || accountType === 'student' || accountType === 'grade11') {
             this.currentAccount = accountType;
         } else {
-            throw new Error('Invalid account type. Use "teacher" or "admin" or "student"');
+            throw new Error('Invalid account type. Use "teacher", "admin", "student", or "grade11"');
         }
     }
 
     getAccount(accountType) {
-        if (accountType === 'teacher' || accountType === 'admin' || accountType === 'student') {
+        if (accountType === 'teacher' || accountType === 'admin' || accountType === 'student' || accountType === 'grade11') {
             return this.accounts[accountType];
         } else {
-            throw new Error('Invalid account type. Use "teacher" or "admin" or "student"');
+            throw new Error('Invalid account type. Use "teacher", "admin", "student", or "grade11"');
         }
     }
 
@@ -70,6 +74,14 @@ class AccountManager {
 
     get adminPassword() {
         return this.accounts.admin.password;
+    }
+
+    get grade11Email() {
+        return this.accounts.grade11.email;
+    }
+
+    get grade11Password() {
+        return this.accounts.grade11.password;
     }
 }
 

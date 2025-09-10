@@ -62,7 +62,7 @@ app.get('/api/tests', (req, res) => {
 
 app.get('/api/accounts', (req, res) => {
     res.json({
-        available: ['teacher', 'admin', 'student'],
+        available: ['teacher', 'admin', 'student', 'grade11'],
         current: accountManager.currentAccount || 'teacher'
     });
 });
@@ -74,7 +74,7 @@ app.post('/api/run-tests', async (req, res) => {
         return res.status(400).json({ error: 'No tests selected' });
     }
 
-    const validAccounts = ['teacher', 'admin', 'student'];
+    const validAccounts = ['teacher', 'admin', 'student', 'grade11'];
     const accountToUse = selectedAccount && validAccounts.includes(selectedAccount) ? selectedAccount : 'teacher';
 
     try {

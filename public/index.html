@@ -164,6 +164,11 @@
             color: #1e40af;
         }
 
+        .account-indicator.grade11 {
+            background: #f0fdf4;
+            color: #166534;
+        }
+
         .test-categories {
             display: grid;
             gap: 30px;
@@ -674,6 +679,7 @@
                         <option value="teacher">👩‍🏫 Teacher</option>
                         <option value="admin">👨‍💼 Admin</option>
                         <option value="student">👨‍🎓 Student</option>
+                        <option value="grade11">🎓 Grade 11</option>
                     </select>
                     <div class="account-indicator teacher" id="accountIndicator">
                         <span>👩‍🏫</span>
@@ -771,13 +777,15 @@
             const accountIcons = {
                 'teacher': '👩‍🏫',
                 'admin': '👨‍💼',
-                'student': '👨‍🎓'
+                'student': '👨‍🎓',
+                'grade11': '🎓'
             };
 
             const accountNames = {
                 'teacher': 'Teacher',
                 'admin': 'Admin',
-                'student': 'Student'
+                'student': 'Student',
+                'grade11': 'Grade 11'
             };
 
             indicator.querySelector('span:first-child').textContent = accountIcons[selectedAccount];
