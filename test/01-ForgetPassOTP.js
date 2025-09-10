@@ -6,7 +6,7 @@ const accountManager = require('../config/accountManager');
 console.log('🚀 Starting Register Web Test');
 console.log('📋 Test Configuration:');
 
-describe('OTP Verification', function () {
+describe('OTP Verification Password', function () {
 
     this.timeout(300000);
     let driver;
