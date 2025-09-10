@@ -42,10 +42,9 @@ const testScripts = {
     'edit-lesson': { name: 'Edit Lesson Test', script: '27-EditLesson', file: 'EditLessonReport.html', category: 'course-content' },
     'delete-module': { name: 'Delete Module Test', script: '28-DeleteModule', file: 'DeleteModuleReport.html', category: 'course-content' },
     'course-clone': { name: 'Course Clone Test', script: '29-CourseClone', file: 'CourseCloneReport.html', category: 'course-management' },
-    'student-dashboard-cards': { name: 'Student Dashboard Cards Test', script: '30-StudentDashboardCards', file: 'StudentDashboardCardsReport.html', category: 'student-management' },
-    'add-subjects': { name: 'Add Subjects Test', script: '31-AddSubjects', file: 'AddSubjectsReport.html', category: 'course-management' },
-    'edit-subject': { name: 'Edit Subject Test', script: '32-EditSubject', file: 'EditSubjectReport.html', category: 'course-management' },
-    'delete-subject': { name: 'Delete Subject Test', script: '33-DeleteSubject', file: 'DeleteSubjectReport.html', category: 'course-management' }
+    'add-subjects': { name: 'Add Subjects Test', script: '30-AddSubjects', file: 'AddSubjectsReport.html', category: 'course-management' },
+    'edit-subject': { name: 'Edit Subject Test', script: '31-EditSubject', file: 'EditSubjectReport.html', category: 'course-management' },
+    'course-enroll-refresh': { name: 'Course Enroll Refresh Test', script: '32-CourseEnrollRefresh', file: 'CourseEnrollRefreshReport.html', category: 'course-management' }
 };
 
 let currentTestRun = null;
