@@ -6,7 +6,7 @@ const accountManager = require('../config/accountManager');
 console.log('🚀 Starting Course Search Test');
 console.log('📋 Test Configuration:');
 
-const SearchCourse = "Music"
+const SearchCourse = "Python"
 
 
 describe('Course Search', function () {
@@ -132,23 +132,23 @@ describe('Course Search', function () {
 
             await driver.sleep(3000);
 
-            console.log('🔍 Checking for courses with "Music" in the title');
+            console.log('🔍 Checking for courses with "Python" in the title');
             await driver.wait(until.elementLocated(By.css("h3")), 10000);
             const courseTitles = await driver.findElements(By.css("h3"));
 
-            let musicCourseFound = false;
+            let pythonCourseFound = false;
             for (const title of courseTitles) {
                 const titleText = await title.getText();
                 console.log('  - Found course title:', titleText);
-                if (titleText.toLowerCase().includes('music')) {
-                    musicCourseFound = true;
-                    console.log('  ✅ Found course with "Music" in title:', titleText);
+                if (titleText.toLowerCase().includes('python')) {
+                    pythonCourseFound = true;
+                    console.log('  ✅ Found course with "Python" in title:', titleText);
                     break;
                 }
             }
 
-            if (!musicCourseFound) {
-                throw new Error('No course with "Music" in the title was found');
+            if (!pythonCourseFound) {
+                throw new Error('No course with "Python" in the title was found');
             }
 
             console.log('✅ Course search test completed successfully');

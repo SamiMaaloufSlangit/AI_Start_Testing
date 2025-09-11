@@ -22,7 +22,7 @@ describe('Create Course', function () {
         options.addArguments('--window-size=1920,1080');
         options.addArguments('--disable-gpu');
         options.addArguments('--disable-extensions');
-        options.addArguments('--headless');
+        //options.addArguments('--headless');
         options.addArguments('--disable-save-password-bubble');
         options.addArguments('--disable-password-manager-reauthentication');
         options.addArguments('--disable-password-generation');
@@ -207,10 +207,9 @@ describe('Create Course', function () {
 
             await driver.sleep(1000);
 
-            console.log('🔘 Closing dropdown by clicking elsewhere');
-            const bodyElement = await driver.findElement(By.css("body"));
-            await bodyElement.click();
-            console.log('  - Dropdown closed successfully');
+            console.log('🔘 Closing dropdown by pressing Escape key');
+            await driver.actions().sendKeys(Key.ESCAPE).perform();
+            console.log('  - Dropdown closed successfully via Escape key');
 
             await driver.sleep(1000);
 
@@ -292,6 +291,8 @@ describe('Create Course', function () {
             console.log(`  - Current URL after submission: ${currentUrl}`);
 
             console.log('🔍 Looking for success notification');
+            let courseCreated = false;
+
             try {
                 await driver.wait(until.elementLocated(By.css("div.text-sm.opacity-90")), 10000);
                 console.log('  - Success notification found');
@@ -302,19 +303,66 @@ describe('Create Course', function () {
 
                 if (notificationText.includes('Course created')) {
                     console.log('✅ Course creation notification verified successfully');
+                    courseCreated = true;
+                } else if (notificationText.toLowerCase().includes('error') || notificationText.toLowerCase().includes('failed')) {
+                    console.log(`❌ Course creation failed with error: "${notificationText}"`);
+                    throw new Error(`Course creation failed: ${notificationText}`);
                 } else {
                     console.log(`⚠️ Unexpected notification text: "${notificationText}"`);
                 }
             } catch (error) {
+                if (error.message.includes('Course creation failed')) {
+                    throw error;
+                }
+
                 console.log('  - No success notification found, checking for alternative selectors');
                 try {
                     const altNotification = await driver.findElement(By.xpath("//div[contains(text(), 'Course created')]"));
                     const altNotificationText = await altNotification.getText();
                     console.log(`  - Alternative notification found: "${altNotificationText}"`);
                     console.log('✅ Course creation notification verified successfully');
+                    courseCreated = true;
                 } catch (altError) {
-                    console.log('⚠️ No success notification found');
+                    try {
+                        const errorSelectors = [
+                            "//div[contains(text(), 'error')]",
+                            "//div[contains(text(), 'Error')]",
+                            "//div[contains(text(), 'failed')]",
+                            "//div[contains(text(), 'Failed')]",
+                            "//div[contains(text(), 'invalid')]",
+                            "//div[contains(text(), 'Invalid')]",
+                            ".error",
+                            ".alert-error",
+                            "[role='alert']"
+                        ];
+
+                        for (const selector of errorSelectors) {
+                            try {
+                                const errorElement = selector.startsWith('.') || selector.startsWith('[')
+                                    ? await driver.findElement(By.css(selector))
+                                    : await driver.findElement(By.xpath(selector));
+                                const errorText = await errorElement.getText();
+                                if (errorText.trim()) {
+                                    console.log(`❌ Course creation failed with error: "${errorText}"`);
+                                    throw new Error(`Course creation failed: ${errorText}`);
+                                }
+                            } catch (selectorError) {
+                            }
+                        }
+                    } catch (errorCheckError) {
+                        if (errorCheckError.message.includes('Course creation failed')) {
+                            throw errorCheckError;
+                        }
+                    }
+
+                    console.log('⚠️ No success notification found - course creation status unclear');
+                    throw new Error('Course creation failed: No success message found after course submission');
                 }
+            }
+
+            if (!courseCreated) {
+                console.log('❌ Course creation was not confirmed - stopping test');
+                throw new Error('Course creation failed: Success confirmation not received');
             }
 
             console.log('🔄 Refreshing page after notification check');
